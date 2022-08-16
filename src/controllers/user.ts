@@ -1,88 +1,68 @@
 import { Req, RouteHandler } from "../types";
 import argon2 from "argon2";
-// import path from "path";
 import fs from "fs";
-import jwt from "jsonwebtoken";
-import config from "../config";
-// import { isNameValid, isEmailValid } from "../utils/validation";
-// import { uploadFile } from "../utils/uploadFile";
 import { UploadedFile } from "express-fileupload";
-import UserModel, { User } from "../models/User";
+import UserModel from "../models/User";
 import { Request, Response } from "express";
-
-type IUser = Pick<User, "firstname" | "lastname" | "email">;
+import validateEmail from "../validation/validateEmail";
+import validateName from "../validation/validateName";
+import AuthResource from "../resources/AuthResource";
+import UserResource from "../resources/UserResource";
 
 const signup: RouteHandler = async (req: Request, res: Response) => {
-  const userDetails = req.body;
-  const email = (userDetails.email as string).trim().toLowerCase();
-  const fullname = (userDetails.fullname as string).trim();
-  //   if (!isEmailValid(email)) {
-  //     return res.status(400).json({ message: "Email is invalid" });
-  //   }
-  //   if (!isNameValid(fullname)) {
-  //     return res.status(400).json({ message: "Name is invalid" });
-  //   }
+  const email = req.body.email.trim().toLowerCase();
+  const firstname = req.body.firstname.trim();
+  const lastname = req.body.lastname.trim();
+  const password = req.body.password.trim();
+  const deviceType = req.body.deviceType.trim();
+
+  if (!validateEmail(email)) {
+    return res.status(400).json({ message: "Email is invalid" });
+  }
+  if (!validateName(firstname)) {
+    return res.status(400).json({ message: "First name is invalid" });
+  }
+  if (!validateName(lastname)) {
+    return res.status(400).json({ message: "Last name is invalid" });
+  }
   const isEmailTaken = await UserModel.findOne({ email });
+
   if (isEmailTaken) {
     return res.status(409).json({ message: "Email is already in use" });
   }
   try {
-    const hashedPassword = await argon2.hash(userDetails.password);
-    const newUser = await UserModel.create({
-      fullname,
+    const hashedPassword = await argon2.hash(password);
+    const user = await UserModel.create({
+      firstname,
+      lastname,
       email,
       password: hashedPassword,
-      profileImage: null,
-      wishlist: [],
-      purchaseHistory: [],
     });
-    const token = jwt.sign({ id: newUser.id }, config.JWT_SECRET!);
-    const data: any = {
-      firstname: newUser.firstname,
-      lastname: newUser.lastname,
-      email: newUser.email,
-      id: "",
-    };
-    return res.status(200).json({
-      message: "User created successfully",
-      token,
-      user: data,
-    });
+
+    return res.status(200).json(new AuthResource(user, deviceType).toJSON());
   } catch (err) {
     return res.status(500).json({ message: "User creation unsuccessfully" });
   }
 };
 
 const signin: RouteHandler = async (req: Req, res) => {
-  const userDetails = req.body;
-  const email = (userDetails.email as string).trim().toLowerCase();
-  //   if (!isEmailValid(email)) {
-  //     return res.status(400).json({ message: "Email is invalid" });
-  //   }
+  const email = req.body.email.trim().toLowerCase();
+  const password = req.body.password.trim();
+  const deviceType = req.body.deviceType;
+  if (!validateEmail(email)) {
+    return res.status(400).json({ message: "Email is invalid" });
+  }
   const user = await UserModel.findOne({ email });
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
 
   try {
-    const isPasswordValid = await argon2.verify(
-      user.password,
-      userDetails.password
-    );
+    const isPasswordValid = await argon2.verify(user.password, password);
     if (!isPasswordValid) {
       return res.status(400).json({ message: "Password is invalid" });
     }
-    const token = jwt.sign({ id: user.id }, config.JWT_SECRET!);
-    const data: IUser = {
-      firstname: user.firstname,
-      lastname: user.lastname,
-      email: user.email,
-    };
-    return res.status(200).json({
-      message: "Login successful",
-      token,
-      user: data,
-    });
+    return res.status(200).json(new AuthResource(user, deviceType).toJSON());
   } catch {
     return res.status(500).json({ message: "Login unsuccessful" });
   }
@@ -139,12 +119,7 @@ export const getUser: RouteHandler = async (req: Req, res) => {
     return res.status(404).json({ message: "User not found" });
   }
 
-  const data: IUser = {
-    firstname: user.firstname,
-    lastname: user.lastname,
-    email: user.email,
-  };
-  return res.status(200).json({ data });
+  return res.status(200).json(new UserResource(user).toJSON());
 };
 
 const UserController = {
