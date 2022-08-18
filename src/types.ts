@@ -19,4 +19,17 @@ export class DeviceTypes {
   static readonly WEB = "web";
 }
 
+export enum ClothType {
+  TSHIRT = 0,
+  SHOES = 1,
+  HOODIE = 2,
+  DRESSES = 3,
+}
+
+export enum ClothGender {
+  WOMEN = 0,
+  MEN = 1,
+  UNISEX = 2,
+}
+
 export type SizeType = "cloth" | "shoe";

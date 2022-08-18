@@ -8,7 +8,7 @@ export interface IUserResource {
 }
 
 export default class UserResource {
-  private id: string;
+  private id?: string;
   private email: string;
   private firstname: string;
   private lastname: string;
