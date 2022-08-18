@@ -13,8 +13,10 @@ export type Req = Request<ParamsDictionary, any, any, QueryString.ParsedQs> & {
   userId?: string;
 };
 
-export default class DeviceTypes {
+export class DeviceTypes {
   static readonly ANDROID = "android";
   static readonly IOS = "ios";
   static readonly WEB = "web";
 }
+
+export type SizeType = "cloth" | "shoe";

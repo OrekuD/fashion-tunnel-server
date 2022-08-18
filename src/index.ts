@@ -16,7 +16,6 @@ const main = async () => {
   conn.on("error", console.error.bind(console, "connection error:"));
   const server = http.createServer(app);
   const io = new Server(server, {
-    transports: ["websocket"],
     cors: {
       origin: "*",
     },
@@ -30,7 +29,7 @@ const main = async () => {
   const port = process.env.PORT || 4000;
 
   app.get("/", (_, res: Response) => {
-    res.send("Yo");
+    res.send("Yooo");
   });
 
   app.use(routes);

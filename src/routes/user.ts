@@ -10,6 +10,7 @@ router.post(
   validateUser,
   UserController.uploadProfileImage
 );
-router.get("/current-user", validateUser, UserController.getUser);
+router.get("/sign-out", validateUser, UserController.signout);
+router.get("/user", validateUser, UserController.user);
 
 export default router;

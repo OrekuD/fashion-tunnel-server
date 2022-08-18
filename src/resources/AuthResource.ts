@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import config from "../config";
 import { User } from "../models/User";
-import DeviceTypes from "../types";
+import { DeviceTypes } from "../types";
 import UserResource, { IUserResource } from "./UserResource";
 
 export interface IAuthResource {
