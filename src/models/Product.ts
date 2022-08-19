@@ -1,9 +1,12 @@
-import { ClothGender, ClothType, SizeType } from "./../types";
+import { ProductGender, ProductCategories, SizeType } from "./../types";
 import { getModelForClass, prop } from "@typegoose/typegoose";
 
 export class Product {
   @prop()
   public id?: string;
+
+  @prop()
+  public _id?: string;
 
   @prop({ required: true })
   public name!: string;
@@ -21,10 +24,10 @@ export class Product {
   public extraInfo!: string;
 
   @prop({ required: true })
-  public gender!: ClothGender;
+  public gender!: ProductGender;
 
   @prop({ required: true })
-  public clothType!: ClothType;
+  public productCategory!: ProductCategories;
 
   @prop({ required: true })
   public sizeType!: SizeType; // TODO: maybe make this optional ?

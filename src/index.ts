@@ -7,7 +7,7 @@ import routes from "./routes";
 import fileUpload from "express-fileupload";
 import { configureCloudinary } from "./integrations/cloudinary";
 import mongoose from "./integrations/mongooose";
-import tempSeeder from "./seeder/temp_seeder";
+import seeder from "./seeder/seeder";
 
 const main = async () => {
   const app = express();
@@ -25,13 +25,13 @@ const main = async () => {
   app.use(fileUpload());
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
-  tempSeeder();
+  await seeder();
 
   const socketClients: Array<string> = [];
   const port = process.env.PORT || 4000;
 
   app.get("/", (_, res: Response) => {
-    res.send("Yooo");
+    res.send("Yoo");
   });
 
   app.use(routes);

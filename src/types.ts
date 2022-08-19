@@ -19,14 +19,16 @@ export class DeviceTypes {
   static readonly WEB = "web";
 }
 
-export enum ClothType {
+export enum ProductCategories {
   TSHIRT = 0,
   SHOES = 1,
   HOODIE = 2,
   DRESSES = 3,
+  TROUSERS = 4,
+  JACKET = 5,
 }
 
-export enum ClothGender {
+export enum ProductGender {
   WOMEN = 0,
   MEN = 1,
   UNISEX = 2,

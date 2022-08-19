@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "tsc -w",
-    "start": "nodemon dist/index.js"
+    "watch": "tsc -w && npm run make:images",
+    "start": "nodemon dist/index.js",
+    "make:images": "copyfiles -u 1 ./src/product_images ./dist"
   },
   "author": "David Opoku",
   "license": "ISC",
@@ -16,6 +17,7 @@
     "@types/jsonwebtoken": "^8.5.8",
     "@types/node": "^18.7.6",
     "@types/uuid": "^8.3.4",
+    "copyfiles": "^2.4.1",
     "typescript": "^4.7.4"
   },
   "dependencies": {
