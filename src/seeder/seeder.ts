@@ -1,7 +1,7 @@
 import { ProductGender } from "../types";
 import { Product } from "../models/Product";
 import ProductModel from "../models/Product";
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 import { faker } from "@faker-js/faker";
 import generateRandomQuantity from "../utils/generateRandomQuantity";
 import fs from "fs";
@@ -35,6 +35,7 @@ const seeder = async () => {
       }
     });
 
+    let index = 0;
     for (var image in dict) {
       const images: Array<string> = [];
       for (const file in dict[image]) {
@@ -43,14 +44,15 @@ const seeder = async () => {
           { access_mode: "public", folder: "/products" }
         );
         images.unshift(url);
+        index++;
       }
 
-      console.log(`${image} done uploading`);
+      console.log(`${index}/${rawImages.length} ${".".repeat(index)}`);
 
       const sizeType = image.includes("shoes") ? "shoe" : "cloth";
 
       testProducts.push({
-        id: new mongoose.Types.ObjectId().toString(),
+        // id: new mongoose.Types.ObjectId().toString(),
         name: getProductName(image),
         description: faker.commerce.productDescription(),
         price: Number(Number(faker.commerce.price(12, 400, 2)).toFixed(2)),

@@ -23,6 +23,10 @@ export class User {
   // public jobs?: string[];
 }
 
-const UserModel = getModelForClass(User);
+const UserModel = getModelForClass(User, {
+  schemaOptions: {
+    timestamps: true,
+  },
+});
 
 export default UserModel;

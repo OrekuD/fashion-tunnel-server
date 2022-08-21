@@ -1,5 +1,6 @@
+import ErrorResource from "../resources/ErrorResource";
 import ProductModel from "../models/Product";
-import { RouteHandler } from "./../types";
+import { Req, RouteHandler } from "./../types";
 import { Response } from "express";
 import ProductResource from "../resources/ProductResource";
 
@@ -11,6 +12,18 @@ const getProducts: RouteHandler = async (_, res: Response) => {
     .json(data.map((product) => new ProductResource(product).toJSON()));
 };
 
-const ProductsController = { getProducts };
+const getProduct: RouteHandler = async (req: Req, res: Response) => {
+  const productId = req.params.productId;
+  const product = await ProductModel.findOne({ id: productId });
+
+  if (!product) {
+    return res
+      .status(404)
+      .json(new ErrorResource("Product not found", 404).toJSON());
+  }
+  return res.status(200).json(new ProductResource(product).toJSON());
+};
+
+const ProductsController = { getProducts, getProduct };
 
 export default ProductsController;

@@ -16,7 +16,10 @@ export default class AuthResource {
   private user: User;
 
   constructor(user: User, deviceType: DeviceTypes) {
-    this.accessToken = jwt.sign({ id: user.id }, config.JWT_SECRET!);
+    this.accessToken = jwt.sign(
+      { userId: (user as any)._id },
+      config.JWT_SECRET!
+    );
     this.deviceType = deviceType;
     this.user = user;
   }

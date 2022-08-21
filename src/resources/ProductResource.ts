@@ -14,7 +14,7 @@ export default class ProductResource {
   private images: Array<string>;
 
   constructor(product: Product) {
-    this.id = product._id;
+    this.id = (product as any)._id;
     this.name = product.name;
     this.description = product.description;
     this.price = product.price;

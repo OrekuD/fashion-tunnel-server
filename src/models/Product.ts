@@ -2,11 +2,8 @@ import { ProductGender, ProductCategories, SizeType } from "./../types";
 import { getModelForClass, prop } from "@typegoose/typegoose";
 
 export class Product {
-  @prop()
-  public id?: string;
-
-  @prop()
-  public _id?: string;
+  // @prop()
+  // public _id?: string;
 
   @prop({ required: true })
   public name!: string;
@@ -36,6 +33,10 @@ export class Product {
   public images!: Array<string>;
 }
 
-const ProductModel = getModelForClass(Product);
+const ProductModel = getModelForClass(Product, {
+  schemaOptions: {
+    timestamps: true,
+  },
+});
 
 export default ProductModel;

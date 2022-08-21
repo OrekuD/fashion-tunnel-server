@@ -11,12 +11,13 @@ export const validateUser = (req: Req, res: Response, next: () => void) => {
   return jwt.verify(
     token,
     config.JWT_SECRET as string,
-    (err: any, userId: any) => {
+    (err: any, user: any) => {
       if (err) {
         console.log(err);
         return res.sendStatus(403);
       }
-      req.userId = userId.id;
+      // console.log({ userId: user.userId });
+      req.userId = user.userId;
       return next();
     }
   );
