@@ -64,7 +64,6 @@ const signup: RouteHandler = async (req: Request, res: Response) => {
 };
 
 const signin: RouteHandler = async (req: Req, res) => {
-  console.log({ req: req.body });
   const email = req.body.email.trim().toLowerCase();
   const password = req.body.password.trim();
   const deviceType = req.body.deviceType;
