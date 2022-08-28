@@ -1,6 +1,6 @@
 import ErrorResource from "../resources/ErrorResource";
 import ProductModel from "../models/Product";
-import { Req, RouteHandler } from "./../types";
+import { IRequest, RouteHandler } from "./../types";
 import { Response } from "express";
 import ProductResource from "../resources/ProductResource";
 
@@ -12,7 +12,7 @@ const getProducts: RouteHandler = async (_, res: Response) => {
     .json(data.map((product) => new ProductResource(product).toJSON()));
 };
 
-const getProduct: RouteHandler = async (req: Req, res: Response) => {
+const getProduct: RouteHandler = async (req: IRequest<any>, res: Response) => {
   const productId = req.params.productId;
   const product = await ProductModel.findOne({ id: productId });
 

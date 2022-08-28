@@ -1,9 +1,13 @@
 import jwt from "jsonwebtoken";
 import { Response } from "express";
 import config from "../config";
-import { Req } from "../types";
+import { IRequest } from "../types";
 
-export const validateUser = (req: Req, res: Response, next: () => void) => {
+export const validateUser = (
+  req: IRequest<any>,
+  res: Response,
+  next: () => void
+) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
   if (!token) return res.sendStatus(401);

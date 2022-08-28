@@ -4,12 +4,28 @@ import { RouteHandler } from "./../types";
 import ErrorResource from "../resources/ErrorResource";
 import OkResource from "../resources/OkResource";
 import ProductModel from "../models/Product";
+import OrderModel from "../models/Order";
+import DetailedOrderResource from "../resources/DetailedOrderResource";
 
 const getAllUsers: RouteHandler = async (_, res) => {
-  const users = await UserModel.find();
+  const users = await UserModel.find().sort({
+    createdAt: -1,
+  });
   return res
     .status(200)
     .json(users.map((user) => new DetailedUserResource(user).toJSON()));
+};
+
+const getAllOrders: RouteHandler = async (_, res) => {
+  const orders = await OrderModel.find().sort({
+    createdAt: -1,
+  });
+  return res.status(200).json(
+    orders.map(async (order) => {
+      const user = await UserModel.findById(order.userId);
+      return new DetailedOrderResource(order, user).toJSON();
+    })
+  );
 };
 
 const deleteUser: RouteHandler = async (req, res) => {
@@ -38,6 +54,7 @@ const AdminController = {
   getAllUsers,
   deleteUser,
   deleteProduct,
+  getAllOrders,
 };
 
 export default AdminController;

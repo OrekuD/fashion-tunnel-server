@@ -1,17 +1,22 @@
-import { Req, RouteHandler } from "../types";
+import { IRequest, RouteHandler } from "../types";
 import argon2 from "argon2";
 import fs from "fs";
 import { UploadedFile } from "express-fileupload";
 import UserModel from "../models/User";
-import { Request, Response } from "express";
+import { Response } from "express";
 import validateEmail from "../validation/validateEmail";
 import validateName from "../validation/validateName";
 import AuthResource from "../resources/AuthResource";
 import UserResource from "../resources/UserResource";
 import ErrorResource from "../resources/ErrorResource";
 import OkResource from "../resources/OkResource";
+import SignUpRequest from "../requests/SignUpRequest";
+import SignInRequest from "../requests/SignInRequest";
 
-const signup: RouteHandler = async (req: Request, res: Response) => {
+const signup: RouteHandler = async (
+  req: IRequest<SignUpRequest>,
+  res: Response
+) => {
   const email = req.body.email.trim().toLowerCase();
   const firstname = req.body.firstname.trim();
   const lastname = req.body.lastname.trim();
@@ -24,13 +29,11 @@ const signup: RouteHandler = async (req: Request, res: Response) => {
       .json(new ErrorResource("Email is invalid", 400).toJSON());
   }
   if (!validateName(firstname)) {
-    // return res.status(400).json({ message: "First name is invalid" });
     return res
       .status(400)
       .json(new ErrorResource("First name is invalid", 400));
   }
   if (!validateName(lastname)) {
-    // return res.status(400).json({ message: "Last name is invalid" });
     return res
       .status(400)
       .json(new ErrorResource("Last name is invalid", 400).toJSON());
@@ -41,7 +44,6 @@ const signup: RouteHandler = async (req: Request, res: Response) => {
     return res
       .status(409)
       .json(new ErrorResource("Email is already in use", 409).toJSON());
-    // return res.status(409).json({ message: "Email is already in use" });
   }
   try {
     const hashedPassword = await argon2.hash(password);
@@ -56,14 +58,13 @@ const signup: RouteHandler = async (req: Request, res: Response) => {
 
     return res.status(200).json(new AuthResource(user, deviceType).toJSON());
   } catch (err) {
-    // return res.status(500).json({ message: "User creation unsuccessfully" });
     return res
       .status(500)
       .json(new ErrorResource("User creation unsuccessfully", 500).toJSON());
   }
 };
 
-const signin: RouteHandler = async (req: Req, res) => {
+const signin: RouteHandler = async (req: IRequest<SignInRequest>, res) => {
   const email = req.body.email.trim().toLowerCase();
   const password = req.body.password.trim();
   const deviceType = req.body.deviceType;
@@ -94,7 +95,10 @@ const signin: RouteHandler = async (req: Req, res) => {
   }
 };
 
-const uploadProfileImage: RouteHandler = async (req: Req, res: Response) => {
+const uploadProfileImage: RouteHandler = async (
+  req: IRequest<any>,
+  res: Response
+) => {
   const user = await UserModel.findById(req.userId);
   if (!user) {
     return res.status(404).json({ message: "User not found" });
@@ -139,7 +143,7 @@ const uploadProfileImage: RouteHandler = async (req: Req, res: Response) => {
   }
 };
 
-export const user: RouteHandler = async (req: Req, res) => {
+export const user: RouteHandler = async (req: IRequest<any>, res) => {
   const user = await UserModel.findById(req.userId);
   if (!user) {
     return res.status(404).json({ message: "User not found" });
@@ -148,14 +152,14 @@ export const user: RouteHandler = async (req: Req, res) => {
   return res.status(200).json(new UserResource(user).toJSON());
 };
 
-export const signout: RouteHandler = async (req: Req, res) => {
+export const signout: RouteHandler = async (req: IRequest<any>, res) => {
   const user = await UserModel.findById(req.userId);
   if (!user) {
     return res
       .status(404)
       .json(new ErrorResource("User not found", 404).toJSON());
   }
-  // destroy session??
+  // destroy session TODO:
   return res.status(200).json(new OkResource().toJSON());
 };
 
