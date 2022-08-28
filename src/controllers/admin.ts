@@ -16,6 +16,13 @@ const getAllUsers: RouteHandler = async (_, res) => {
     .json(users.map((user) => new DetailedUserResource(user).toJSON()));
 };
 
+const getIncome: RouteHandler = async (_, res) => {
+  const orders = await OrderModel.find();
+  return res
+    .status(200)
+    .json({ amount: orders.reduce((sum, order) => sum + order.total, 0) });
+};
+
 const getAllOrders: RouteHandler = async (_, res) => {
   const orders = await OrderModel.find().sort({
     createdAt: -1,
@@ -61,6 +68,7 @@ const AdminController = {
   deleteUser,
   deleteProduct,
   getAllOrders,
+  getIncome,
 };
 
 export default AdminController;
