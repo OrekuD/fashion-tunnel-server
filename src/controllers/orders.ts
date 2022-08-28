@@ -7,6 +7,25 @@ import { calculateOrder } from "../utils/calculateOrder";
 import ProductModel from "../models/Product";
 import CreateOrderRequest from "../requests/CreateOrderRequest";
 
+const getOrder: RouteHandler = async (req: IRequest<any>, res) => {
+  const user = await UserModel.findById(req.userId);
+  if (!user) {
+    return res
+      .status(404)
+      .json(new ErrorResource("User not found", 404).toJSON());
+  }
+  const order = await OrderModel.findOne({
+    userId: req.userId,
+    _id: req.params.orderId,
+  });
+  if (!order) {
+    return res
+      .status(404)
+      .json(new ErrorResource("Order not found", 404).toJSON());
+  }
+  return res.status(200).json(new OrderResource(order).toJSON());
+};
+
 const getUserOrders: RouteHandler = async (req: IRequest<any>, res) => {
   const user = await UserModel.findById(req.userId);
   if (!user) {
@@ -41,10 +60,13 @@ const createNewOrder: RouteHandler = async (
   if (productIds.length !== products.length) {
     // do something?
     console.log("some products not found");
+    return res
+      .status(400)
+      .json(new ErrorResource("Some products were not found", 400).toJSON());
   }
 
   const orderProducts: Array<OrderProduct> = products.map(({ _id, price }) => {
-    const item = req.body.products.find(({ id }) => id === _id)!;
+    const item = req.body.products.find(({ id }) => id === _id.toString())!;
     return {
       price,
       id: _id,
@@ -71,7 +93,7 @@ const createNewOrder: RouteHandler = async (
     subtotal,
     discount,
     userId: req.userId,
-    products,
+    products: orderProducts,
     orderStatus: OrderStatus.PENDING,
   });
   return res.status(200).json(new OrderResource(order).toJSON());
@@ -80,6 +102,7 @@ const createNewOrder: RouteHandler = async (
 const OrderController = {
   getUserOrders,
   createNewOrder,
+  getOrder,
 };
 
 export default OrderController;

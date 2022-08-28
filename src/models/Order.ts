@@ -13,7 +13,7 @@ export class Order extends TimeStamps {
   public discount!: number;
 
   @prop({ required: true })
-  public products!: OrderProduct;
+  public products!: Array<OrderProduct>;
 
   @prop({ required: true })
   public userId!: string;

@@ -20,12 +20,18 @@ const getAllOrders: RouteHandler = async (_, res) => {
   const orders = await OrderModel.find().sort({
     createdAt: -1,
   });
-  return res.status(200).json(
-    orders.map(async (order) => {
-      const user = await UserModel.findById(order.userId);
-      return new DetailedOrderResource(order, user).toJSON();
-    })
-  );
+  const response: Array<any> = [];
+  for (const orderIndex in orders) {
+    const user = await UserModel.findById(orders[orderIndex].userId);
+    response.push(
+      new DetailedOrderResource(
+        orders[orderIndex],
+        user,
+        orders[orderIndex].products
+      ).toJSON()
+    );
+  }
+  return res.status(200).json(response);
 };
 
 const deleteUser: RouteHandler = async (req, res) => {
