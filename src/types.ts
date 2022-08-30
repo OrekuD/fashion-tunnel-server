@@ -84,4 +84,19 @@ export interface OrderProduct {
   total: number;
 }
 
+export interface DetailedOrderProduct {
+  id: string;
+  price: number;
+  count: number;
+  total: number;
+  name: string;
+  description: string;
+  extraInfo: string;
+  gender: ProductGender;
+  productQuantity: number;
+  images: Array<string>;
+  sizeType: SizeType;
+  productCategory: ProductCategories;
+}
+
 export type SizeType = "cloth" | "shoe";
