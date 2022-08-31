@@ -38,6 +38,7 @@ const config = {
     CLOUDINARY_SECRET: process.env.CLOUDINARY_SECRET,
     CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
     CLOUDINARY_FOLDER: process.env.CLOUDINARY_FOLDER,
+    NODE_ENV: process.env.NODE_ENV,
 };
 exports.default = config;
 //# sourceMappingURL=config.js.map

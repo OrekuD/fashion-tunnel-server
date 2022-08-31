@@ -8,6 +8,7 @@ import fileUpload from "express-fileupload";
 import { configureCloudinary } from "./integrations/cloudinary";
 import mongoose from "./integrations/mongooose";
 import seeder from "./seeder/seeder";
+import config from "./config";
 
 const main = async () => {
   const app = express();
@@ -28,7 +29,7 @@ const main = async () => {
   await seeder();
 
   const socketClients: Array<string> = [];
-  const port = process.env.PORT || 4000;
+  const port = config.PORT || 4000;
 
   app.get("/", (_, res: Response) => {
     res.send("Yoo");
@@ -39,7 +40,13 @@ const main = async () => {
   io.on("connection", (socket) => onSocketConnect(socket, socketClients));
 
   server.listen(port, () => {
-    console.info(`⚡️[server]: Server is running at http://localhost:${port}`);
+    if (config.NODE_ENV === "development") {
+      console.info(
+        `⚡️[server]: Server is running at http://localhost:${port}`
+      );
+    } else {
+      console.info(`⚡️[server]: Server is running`);
+    }
   });
 };
 

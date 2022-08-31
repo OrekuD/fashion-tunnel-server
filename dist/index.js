@@ -22,6 +22,7 @@ const express_fileupload_1 = __importDefault(require("express-fileupload"));
 const cloudinary_1 = require("./integrations/cloudinary");
 const mongooose_1 = __importDefault(require("./integrations/mongooose"));
 const seeder_1 = __importDefault(require("./seeder/seeder"));
+const config_1 = __importDefault(require("./config"));
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const app = (0, express_1.default)();
     (0, cloudinary_1.configureCloudinary)();
@@ -39,14 +40,19 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     app.use(express_1.default.urlencoded({ extended: true }));
     yield (0, seeder_1.default)();
     const socketClients = [];
-    const port = process.env.PORT || 4000;
+    const port = config_1.default.PORT || 4000;
     app.get("/", (_, res) => {
         res.send("Yoo");
     });
     app.use(routes_1.default);
     io.on("connection", (socket) => (0, onSocketConnect_1.default)(socket, socketClients));
     server.listen(port, () => {
-        console.info(`⚡️[server]: Server is running at http://localhost:${port}`);
+        if (config_1.default.NODE_ENV === "development") {
+            console.info(`⚡️[server]: Server is running at http://localhost:${port}`);
+        }
+        else {
+            console.info(`⚡️[server]: Server is running`);
+        }
     });
 });
 main();
