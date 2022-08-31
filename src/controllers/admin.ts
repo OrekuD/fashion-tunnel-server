@@ -102,7 +102,7 @@ const getUser: RouteHandler = async (req, res) => {
   return res.status(200).json(new DetailedUserResource(user).toJSON());
 };
 
-const getAllProducts: RouteHandler = async (req, res) => {
+const getAllProducts: RouteHandler = async (_, res) => {
   const data = await ProductModel.find();
   // add some sort of pagination
   return res
