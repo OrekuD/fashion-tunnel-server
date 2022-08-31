@@ -7,8 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "tsc -w && npm run make:images",
     "dev": "nodemon dist/index.js",
-    "start": "node dist/index.js",
-    "build": "tsc --build",
+    "start": "node ./dist/index.js",
+    "build": "tsc",
     "make:images": "copyfiles -u 1 ./src/product_images ./dist"
   },
   "author": "David Opoku",
