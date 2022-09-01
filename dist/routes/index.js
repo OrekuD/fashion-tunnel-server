@@ -12,7 +12,7 @@ const orders_1 = __importDefault(require("./orders"));
 const userAddress_1 = __importDefault(require("./userAddress"));
 const router = (0, express_1.Router)();
 router.use("/user", user_1.default);
-router.use("/address", userAddress_1.default);
+router.use("/user-address", userAddress_1.default);
 router.use("/products", products_1.default);
 router.use("/favourites", favourites_1.default);
 router.use("/admin", admin_1.default);

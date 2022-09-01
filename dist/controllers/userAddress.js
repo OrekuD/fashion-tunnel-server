@@ -16,7 +16,7 @@ const ErrorResource_1 = __importDefault(require("../resources/ErrorResource"));
 const User_1 = __importDefault(require("../models/User"));
 const UserAddress_1 = __importDefault(require("../models/UserAddress"));
 const UserAddressResource_1 = __importDefault(require("../resources/UserAddressResource"));
-const OkResource_1 = __importDefault(require("src/resources/OkResource"));
+const OkResource_1 = __importDefault(require("../resources/OkResource"));
 const getUserAddresses = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield User_1.default.findById(req.userId);
     if (!user) {

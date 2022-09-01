@@ -3,8 +3,8 @@ import UserModel from "../models/User";
 import { IRequest, RouteHandler } from "../types";
 import UserAddressModel from "../models/UserAddress";
 import UserAddressResource from "../resources/UserAddressResource";
-import AddNewAddressRequest from "src/requests/AddNewAddressRequest";
-import OkResource from "src/resources/OkResource";
+import AddNewAddressRequest from "../requests/AddNewAddressRequest";
+import OkResource from "../resources/OkResource";
 
 const getUserAddresses: RouteHandler = async (req: IRequest<any>, res) => {
   const user = await UserModel.findById(req.userId);

@@ -8,13 +8,8 @@ import UserAddressRoutes from "./userAddress";
 
 const router = Router();
 
-// router.get("/", (req, res) => {
-//   res.status(200).send({ message: "Hi there" });
-// });
-
-// router.use("/products", ProductsRoutes);
 router.use("/user", UserRoutes);
-router.use("/address", UserAddressRoutes);
+router.use("/user-address", UserAddressRoutes);
 router.use("/products", ProductsRoutes);
 router.use("/favourites", FavouritesRoutes);
 router.use("/admin", AdminRoutes);
