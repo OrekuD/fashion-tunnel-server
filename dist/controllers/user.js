@@ -144,12 +144,74 @@ const signout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     return res.status(200).json(new OkResource_1.default().toJSON());
 });
 exports.signout = signout;
+const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield User_1.default.findById(req.userId);
+    if (!user) {
+        return res
+            .status(404)
+            .json(new ErrorResource_1.default("User not found", 404).toJSON());
+    }
+    const checkEmail = yield User_1.default.findOne({
+        email: req.body.email.trim().toLowerCase(),
+    });
+    if (checkEmail &&
+        req.body.email.trim().toLowerCase() !== user.email.toLowerCase()) {
+        return res
+            .status(409)
+            .json(new ErrorResource_1.default("Email already taken", 409).toJSON());
+    }
+    user.email = req.body.email.trim().toLowerCase();
+    user.firstname = req.body.firstname.trim();
+    user.lastname = req.body.lastname.trim();
+    yield user.save();
+    return res.status(200).json(new UserResource_1.default(user).toJSON());
+});
+const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield User_1.default.findById(req.userId);
+    if (!user) {
+        return res
+            .status(404)
+            .json(new ErrorResource_1.default("User not found", 404).toJSON());
+    }
+    try {
+        const isPasswordValid = yield argon2_1.default.verify(user.password, req.body.oldPassword);
+        if (!isPasswordValid) {
+            return res
+                .status(401)
+                .json(new ErrorResource_1.default("Password incorrect", 401).toJSON());
+        }
+        const hashedPassword = yield argon2_1.default.hash(req.body.newPassword);
+        yield User_1.default.updateOne({ _id: req.userId }, {
+            password: hashedPassword,
+        });
+        return res.status(200).json(new OkResource_1.default().toJSON());
+    }
+    catch (e) {
+        return res
+            .status(500)
+            .json(new ErrorResource_1.default("There was an issue with the server", 500));
+    }
+});
+const validateUserEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield User_1.default.findOne({
+        email: req.body.email.trim().toLowerCase(),
+    });
+    if (user) {
+        return res
+            .status(400)
+            .json(new ErrorResource_1.default("Email is taken", 400).toJSON());
+    }
+    return res.status(200).json(new OkResource_1.default().toJSON());
+});
 const UserController = {
     signup,
     signin,
     uploadProfileImage,
     user: exports.user,
     signout: exports.signout,
+    updateUser,
+    validateUserEmail,
+    changePassword,
 };
 exports.default = UserController;
 //# sourceMappingURL=user.js.map

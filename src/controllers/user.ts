@@ -12,6 +12,9 @@ import ErrorResource from "../resources/ErrorResource";
 import OkResource from "../resources/OkResource";
 import SignUpRequest from "../requests/SignUpRequest";
 import SignInRequest from "../requests/SignInRequest";
+import UpdateUserRequest from "../requests/UpdateUserRequest";
+import ValidateEmailRequest from "../requests/ValidateEmailRequest";
+import ChangePasswordRequest from "src/requests/ChangePasswordRequest";
 
 const signup: RouteHandler = async (
   req: IRequest<SignUpRequest>,
@@ -163,12 +166,111 @@ export const signout: RouteHandler = async (req: IRequest<any>, res) => {
   return res.status(200).json(new OkResource().toJSON());
 };
 
+const updateUser: RouteHandler = async (
+  req: IRequest<UpdateUserRequest>,
+  res
+) => {
+  const user = await UserModel.findById(req.userId);
+  if (!user) {
+    return res
+      .status(404)
+      .json(new ErrorResource("User not found", 404).toJSON());
+  }
+  const checkEmail = await UserModel.findOne({
+    email: req.body.email.trim().toLowerCase(),
+  });
+
+  if (
+    checkEmail &&
+    req.body.email.trim().toLowerCase() !== user.email.toLowerCase()
+  ) {
+    return res
+      .status(409)
+      .json(new ErrorResource("Email already taken", 409).toJSON());
+  }
+
+  user.email = req.body.email.trim().toLowerCase();
+  user.firstname = req.body.firstname.trim();
+  user.lastname = req.body.lastname.trim();
+
+  await user.save();
+
+  // await UserModel.updateOne(
+  //   { _id: req.userId },
+  //   {
+  //     email: req.body.email.trim().toLowerCase(),
+  //     firstname: req.body.firstname.trim(),
+  //     lastname: req.body.lastname.trim(),
+  //   }
+  // );
+
+  return res.status(200).json(new UserResource(user).toJSON());
+};
+
+const changePassword: RouteHandler = async (
+  req: IRequest<ChangePasswordRequest>,
+  res
+) => {
+  const user = await UserModel.findById(req.userId);
+  if (!user) {
+    return res
+      .status(404)
+      .json(new ErrorResource("User not found", 404).toJSON());
+  }
+
+  try {
+    const isPasswordValid = await argon2.verify(
+      user.password,
+      req.body.oldPassword
+    );
+
+    if (!isPasswordValid) {
+      return res
+        .status(401)
+        .json(new ErrorResource("Password incorrect", 401).toJSON());
+    }
+
+    const hashedPassword = await argon2.hash(req.body.newPassword);
+
+    await UserModel.updateOne(
+      { _id: req.userId },
+      {
+        password: hashedPassword,
+      }
+    );
+    return res.status(200).json(new OkResource().toJSON());
+  } catch (e) {
+    return res
+      .status(500)
+      .json(new ErrorResource("There was an issue with the server", 500));
+  }
+};
+
+const validateUserEmail: RouteHandler = async (
+  req: IRequest<ValidateEmailRequest>,
+  res
+) => {
+  const user = await UserModel.findOne({
+    email: req.body.email.trim().toLowerCase(),
+  });
+
+  if (user) {
+    return res
+      .status(400)
+      .json(new ErrorResource("Email is taken", 400).toJSON());
+  }
+  return res.status(200).json(new OkResource().toJSON());
+};
+
 const UserController = {
   signup,
   signin,
   uploadProfileImage,
   user,
   signout,
+  updateUser,
+  validateUserEmail,
+  changePassword,
 };
 
 export default UserController;

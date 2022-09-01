@@ -11,6 +11,9 @@ router.post(
   UserController.uploadProfileImage
 );
 router.get("/sign-out", validateUser, UserController.signout);
-router.get("/user", validateUser, UserController.user);
+router.get("/", validateUser, UserController.user);
+router.put("/", validateUser, UserController.updateUser);
+router.put("/change-password", validateUser, UserController.changePassword);
+router.post("/validate/email", UserController.validateUserEmail);
 
 export default router;

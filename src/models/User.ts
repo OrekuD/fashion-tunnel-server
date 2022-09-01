@@ -19,9 +19,6 @@ export class User extends TimeStamps {
 
   @prop({ required: true })
   public deviceType!: string;
-
-  // @prop({ type: () => [String] })
-  // public jobs?: string[];
 }
 
 const UserModel = getModelForClass(User, {

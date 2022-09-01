@@ -11,6 +11,9 @@ router.post("/sign-up", user_1.default.signup);
 router.post("/sign-in", user_1.default.signin);
 router.post("/upload-profile-image", validateUser_1.validateUser, user_1.default.uploadProfileImage);
 router.get("/sign-out", validateUser_1.validateUser, user_1.default.signout);
-router.get("/user", validateUser_1.validateUser, user_1.default.user);
+router.get("/", validateUser_1.validateUser, user_1.default.user);
+router.put("/", validateUser_1.validateUser, user_1.default.updateUser);
+router.put("/change-password", validateUser_1.validateUser, user_1.default.changePassword);
+router.post("/validate/email", user_1.default.validateUserEmail);
 exports.default = router;
 //# sourceMappingURL=user.js.map
