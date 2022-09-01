@@ -4,6 +4,7 @@ import ProductsRoutes from "./products";
 import FavouritesRoutes from "./favourites";
 import AdminRoutes from "./admin";
 import OrdersRoutes from "./orders";
+import UserAddressRoutes from "./userAddress";
 
 const router = Router();
 
@@ -13,6 +14,7 @@ const router = Router();
 
 // router.use("/products", ProductsRoutes);
 router.use("/user", UserRoutes);
+router.use("/address", UserAddressRoutes);
 router.use("/products", ProductsRoutes);
 router.use("/favourites", FavouritesRoutes);
 router.use("/admin", AdminRoutes);

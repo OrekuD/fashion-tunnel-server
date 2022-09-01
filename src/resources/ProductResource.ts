@@ -2,7 +2,7 @@ import { Product } from "../models/Product";
 import { ProductCategories, ProductGender, SizeType } from "./../types";
 
 export default class ProductResource {
-  private id?: string;
+  private id: string;
   private name: string;
   private description: string;
   private price: number;

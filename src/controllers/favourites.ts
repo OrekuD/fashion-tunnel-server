@@ -1,6 +1,5 @@
 import OkResource from "../resources/OkResource";
 import ProductResource from "../resources/ProductResource";
-import { Response } from "express";
 import ErrorResource from "../resources/ErrorResource";
 import UserModel from "../models/User";
 import { IRequest, RouteHandler } from "./../types";
@@ -9,7 +8,7 @@ import ProductModel from "../models/Product";
 
 const updateFavourites: RouteHandler = async (
   req: IRequest<{ productId: string }>,
-  res: Response
+  res
 ) => {
   const user = await UserModel.findById(req.userId);
   if (!user) {
@@ -51,10 +50,7 @@ const updateFavourites: RouteHandler = async (
   return res.status(200).json(new OkResource().toJSON());
 };
 
-const getUserFavourites: RouteHandler = async (
-  req: IRequest<any>,
-  res: Response
-) => {
+const getUserFavourites: RouteHandler = async (req: IRequest<any>, res) => {
   const user = await UserModel.findById(req.userId);
   if (!user) {
     return res
