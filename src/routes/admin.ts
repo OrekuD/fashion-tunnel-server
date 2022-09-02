@@ -5,6 +5,7 @@ const router = Router();
 
 router.get("/orders", AdminController.getAllOrders);
 router.get("/orders/:orderId", AdminController.getOrder);
+router.get("/socket/:userId", AdminController.test);
 
 router.get("/income", AdminController.getIncome);
 

@@ -9,16 +9,6 @@ export type RouteHandler = RequestHandler<
   QueryString.ParsedQs
 >;
 
-// export type Req<T> = Request<
-//   ParamsDictionary,
-//   any,
-//   any,
-//   QueryString.ParsedQs
-// > & {
-//   userId?: string;
-//   body: T;
-// };
-
 export interface IRequest<T> extends Request {
   body: T;
   userId?: string;

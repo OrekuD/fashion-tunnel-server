@@ -9,6 +9,7 @@ import { configureCloudinary } from "./integrations/cloudinary";
 import mongoose from "./integrations/mongooose";
 import seeder from "./seeder/seeder";
 import config from "./config";
+import SocketManager from "./managers/SocketManager";
 
 const main = async () => {
   const app = express();
@@ -28,7 +29,9 @@ const main = async () => {
   app.use(express.urlencoded({ extended: true }));
   await seeder();
 
-  const socketClients: Array<string> = [];
+  // const socketClients: Array<{ id: string; userId: string }> = [];
+  // io.on("connection", (socket) => onSocketConnect(socket, socketClients));
+
   const port = config.PORT || 4000;
 
   app.get("/", (_, res: Response) => {
@@ -37,7 +40,7 @@ const main = async () => {
 
   app.use(routes);
 
-  io.on("connection", (socket) => onSocketConnect(socket, socketClients));
+  io.on("connection", (socket) => SocketManager.connect(socket));
 
   server.listen(port, () => {
     if (config.NODE_ENV === "development") {

@@ -21,6 +21,7 @@ const Order_1 = __importDefault(require("../models/Order"));
 const SimpleOrderResource_1 = __importDefault(require("../resources/SimpleOrderResource"));
 const DetailedOrderResource_1 = __importDefault(require("../resources/DetailedOrderResource"));
 const DetailedProductResource_1 = __importDefault(require("../resources/DetailedProductResource"));
+const SocketManager_1 = __importDefault(require("../managers/SocketManager"));
 const getAllUsers = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
     const users = yield User_1.default.find().sort({
         createdAt: -1,
@@ -127,6 +128,10 @@ const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     yield Product_1.default.findByIdAndDelete(req.params.productId);
     return res.status(200).json(new OkResource_1.default().toJSON());
 });
+const test = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    SocketManager_1.default.emitMessage("test", req.params.userId, { data: "yep" });
+    return res.status(200).json(new OkResource_1.default().toJSON());
+});
 const AdminController = {
     getAllUsers,
     deleteUser,
@@ -137,6 +142,7 @@ const AdminController = {
     getUser,
     getProduct,
     getAllProducts,
+    test,
 };
 exports.default = AdminController;
 //# sourceMappingURL=admin.js.map

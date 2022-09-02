@@ -9,6 +9,7 @@ import OrderModel from "../models/Order";
 import SimpleOrderResource from "../resources/SimpleOrderResource";
 import DetailedOrderResource from "../resources/DetailedOrderResource";
 import DetailedProductResource from "../resources/DetailedProductResource";
+import SocketManager from "../managers/SocketManager";
 
 const getAllUsers: RouteHandler = async (_, res) => {
   const users = await UserModel.find().sort({
@@ -131,6 +132,14 @@ const deleteProduct: RouteHandler = async (req, res) => {
   return res.status(200).json(new OkResource().toJSON());
 };
 
+// 62fc0872cf44f872c25870cc
+
+const test: RouteHandler = async (req, res) => {
+  SocketManager.emitMessage("test", req.params.userId, { data: "yep" });
+  // const orders = await OrderModel.find();
+  return res.status(200).json(new OkResource().toJSON());
+};
+
 const AdminController = {
   getAllUsers,
   deleteUser,
@@ -141,6 +150,7 @@ const AdminController = {
   getUser,
   getProduct,
   getAllProducts,
+  test,
 };
 
 export default AdminController;
