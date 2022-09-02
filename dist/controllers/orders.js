@@ -38,9 +38,29 @@ const getOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             .json(new ErrorResource_1.default("Order not found", 404).toJSON());
     }
     const userAddress = yield UserAddress_1.default.findById(order.userAddressId);
+    const products = [];
+    for (const orderProduct of order.products) {
+        const product = yield Product_1.default.findById(orderProduct.id);
+        if (product) {
+            products.push({
+                description: product.description,
+                extraInfo: product.extraInfo,
+                gender: product.gender,
+                images: product.images,
+                name: product.name,
+                productCategory: product.productCategory,
+                productQuantity: product.productCategory,
+                sizeType: product.sizeType,
+                price: orderProduct.price,
+                total: orderProduct.total,
+                count: orderProduct.count,
+                id: orderProduct.id,
+            });
+        }
+    }
     return res
         .status(200)
-        .json(new OrderResource_1.default(order, userAddress ? new UserAddressResource_1.default(userAddress).toJSON() : null).toJSON());
+        .json(new OrderResource_1.default(order, userAddress ? new UserAddressResource_1.default(userAddress).toJSON() : null, products).toJSON());
 });
 const getUserOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield User_1.default.findById(req.userId);
@@ -54,15 +74,36 @@ const getUserOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     });
     const data = [];
     for (const order of orders) {
+        const products = [];
         const address = yield UserAddress_1.default.findById(order.userAddressId);
+        for (const orderProduct of order.products) {
+            const product = yield Product_1.default.findById(orderProduct.id);
+            if (product) {
+                products.push({
+                    description: product.description,
+                    extraInfo: product.extraInfo,
+                    gender: product.gender,
+                    images: product.images,
+                    name: product.name,
+                    productCategory: product.productCategory,
+                    productQuantity: product.productCategory,
+                    sizeType: product.sizeType,
+                    price: orderProduct.price,
+                    total: orderProduct.total,
+                    count: orderProduct.count,
+                    id: orderProduct.id,
+                });
+            }
+        }
         data.push({
             order,
             address,
+            products,
         });
     }
     return res
         .status(200)
-        .json(data.map(({ order, address }) => new OrderResource_1.default(order, address ? new UserAddressResource_1.default(address).toJSON() : null).toJSON()));
+        .json(data.map(({ order, address, products }) => new OrderResource_1.default(order, address ? new UserAddressResource_1.default(address).toJSON() : null, products).toJSON()));
 });
 const createNewOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield User_1.default.findById(req.userId);
@@ -110,9 +151,29 @@ const createNewOrder = (req, res) => __awaiter(void 0, void 0, void 0, function*
         userAddressId: req.body.userAddressId,
     });
     const userAddress = yield UserAddress_1.default.findById(order.userAddressId);
+    const detailedProducts = [];
+    for (const orderProduct of order.products) {
+        const product = yield Product_1.default.findById(orderProduct.id);
+        if (product) {
+            detailedProducts.push({
+                description: product.description,
+                extraInfo: product.extraInfo,
+                gender: product.gender,
+                images: product.images,
+                name: product.name,
+                productCategory: product.productCategory,
+                productQuantity: product.productCategory,
+                sizeType: product.sizeType,
+                price: orderProduct.price,
+                total: orderProduct.total,
+                count: orderProduct.count,
+                id: orderProduct.id,
+            });
+        }
+    }
     return res
         .status(200)
-        .json(new OrderResource_1.default(order, userAddress ? new UserAddressResource_1.default(userAddress).toJSON() : null).toJSON());
+        .json(new OrderResource_1.default(order, userAddress ? new UserAddressResource_1.default(userAddress).toJSON() : null, detailedProducts).toJSON());
 });
 const OrderController = {
     getUserOrders,

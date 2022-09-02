@@ -68,13 +68,11 @@ export enum ShoeSizes {
 export enum OrderStatus {
   PENDING = 0,
   ACCEPTED = 1,
-  PREPARING = 2,
-  READY_FOR_DELIVERY = 3,
-  DISPATCHED = 4,
-  DELIVERED = 5,
-  REJECTED = 6,
-  REFUNDED = 7,
-  CANCELLED = 8,
+  PROCESSING = 2,
+  DISPATCHED = 3,
+  DELIVERED = 4,
+  REJECTED = 5,
+  CANCELLED = 6,
 }
 
 export interface OrderProduct {

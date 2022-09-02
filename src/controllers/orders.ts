@@ -1,5 +1,11 @@
 import UserModel from "../models/User";
-import { IRequest, OrderProduct, OrderStatus, RouteHandler } from "../types";
+import {
+  DetailedOrderProduct,
+  IRequest,
+  OrderProduct,
+  OrderStatus,
+  RouteHandler,
+} from "../types";
 import ErrorResource from "../resources/ErrorResource";
 import OrderModel, { Order } from "../models/Order";
 import OrderResource from "../resources/OrderResource";
@@ -20,6 +26,7 @@ const getOrder: RouteHandler = async (req: IRequest<any>, res) => {
     userId: req.userId,
     _id: req.params.orderId,
   });
+
   if (!order) {
     return res
       .status(404)
@@ -28,12 +35,34 @@ const getOrder: RouteHandler = async (req: IRequest<any>, res) => {
 
   const userAddress = await UserAddressModel.findById(order.userAddressId);
 
+  const products: Array<DetailedOrderProduct> = [];
+  for (const orderProduct of order.products) {
+    const product = await ProductModel.findById(orderProduct.id);
+    if (product) {
+      products.push({
+        description: product.description,
+        extraInfo: product.extraInfo,
+        gender: product.gender,
+        images: product.images,
+        name: product.name,
+        productCategory: product.productCategory,
+        productQuantity: product.productCategory,
+        sizeType: product.sizeType,
+        price: orderProduct.price,
+        total: orderProduct.total,
+        count: orderProduct.count,
+        id: orderProduct.id,
+      });
+    }
+  }
+
   return res
     .status(200)
     .json(
       new OrderResource(
         order,
-        userAddress ? new UserAddressResource(userAddress).toJSON() : null
+        userAddress ? new UserAddressResource(userAddress).toJSON() : null,
+        products
       ).toJSON()
     );
 };
@@ -49,23 +78,50 @@ const getUserOrders: RouteHandler = async (req: IRequest<any>, res) => {
     createdAt: -1,
   });
 
-  const data: Array<{ order: Order; address: UserAddress | null }> = [];
+  const data: Array<{
+    order: Order;
+    address: UserAddress | null;
+    products: Array<DetailedOrderProduct>;
+  }> = [];
 
   for (const order of orders) {
+    const products: Array<DetailedOrderProduct> = [];
     const address = await UserAddressModel.findById(order.userAddressId);
+    for (const orderProduct of order.products) {
+      const product = await ProductModel.findById(orderProduct.id);
+      if (product) {
+        products.push({
+          description: product.description,
+          extraInfo: product.extraInfo,
+          gender: product.gender,
+          images: product.images,
+          name: product.name,
+          productCategory: product.productCategory,
+          productQuantity: product.productCategory,
+          sizeType: product.sizeType,
+          price: orderProduct.price,
+          total: orderProduct.total,
+          count: orderProduct.count,
+          id: orderProduct.id,
+        });
+      }
+    }
+
     data.push({
       order,
       address,
+      products,
     });
   }
 
   return res
     .status(200)
     .json(
-      data.map(({ order, address }) =>
+      data.map(({ order, address, products }) =>
         new OrderResource(
           order,
-          address ? new UserAddressResource(address).toJSON() : null
+          address ? new UserAddressResource(address).toJSON() : null,
+          products
         ).toJSON()
       )
     );
@@ -130,12 +186,34 @@ const createNewOrder: RouteHandler = async (
 
   const userAddress = await UserAddressModel.findById(order.userAddressId);
 
+  const detailedProducts: Array<DetailedOrderProduct> = [];
+  for (const orderProduct of order.products) {
+    const product = await ProductModel.findById(orderProduct.id);
+    if (product) {
+      detailedProducts.push({
+        description: product.description,
+        extraInfo: product.extraInfo,
+        gender: product.gender,
+        images: product.images,
+        name: product.name,
+        productCategory: product.productCategory,
+        productQuantity: product.productCategory,
+        sizeType: product.sizeType,
+        price: orderProduct.price,
+        total: orderProduct.total,
+        count: orderProduct.count,
+        id: orderProduct.id,
+      });
+    }
+  }
+
   return res
     .status(200)
     .json(
       new OrderResource(
         order,
-        userAddress ? new UserAddressResource(userAddress).toJSON() : null
+        userAddress ? new UserAddressResource(userAddress).toJSON() : null,
+        detailedProducts
       ).toJSON()
     );
 };

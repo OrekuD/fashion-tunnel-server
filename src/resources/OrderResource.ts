@@ -1,5 +1,5 @@
 import { Order } from "../models/Order";
-import { Address, OrderProduct, OrderStatus } from "../types";
+import { Address, DetailedOrderProduct, OrderStatus } from "../types";
 import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
 
 export default class OrderResource extends TimeStamps {
@@ -8,11 +8,15 @@ export default class OrderResource extends TimeStamps {
   private subtotal: number;
   private discount: number;
   private orderNumber: number;
-  private products: Array<OrderProduct>;
+  private products: Array<DetailedOrderProduct>;
   private orderStatus: OrderStatus;
   private deliveryAddress: Address | null;
 
-  constructor(order: Order, deliveryAddress: Address | null) {
+  constructor(
+    order: Order,
+    deliveryAddress: Address | null,
+    products: Array<DetailedOrderProduct>
+  ) {
     super();
     this.id = (order as any)?._id;
     this.total = order.total;
@@ -21,7 +25,7 @@ export default class OrderResource extends TimeStamps {
     this.orderNumber = order.orderNumber;
     this.orderStatus = order.orderStatus;
     this.createdAt = order.createdAt;
-    this.products = order.products;
+    this.products = products;
     this.deliveryAddress = deliveryAddress;
   }
 

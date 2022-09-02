@@ -46,12 +46,10 @@ var OrderStatus;
 (function (OrderStatus) {
     OrderStatus[OrderStatus["PENDING"] = 0] = "PENDING";
     OrderStatus[OrderStatus["ACCEPTED"] = 1] = "ACCEPTED";
-    OrderStatus[OrderStatus["PREPARING"] = 2] = "PREPARING";
-    OrderStatus[OrderStatus["READY_FOR_DELIVERY"] = 3] = "READY_FOR_DELIVERY";
-    OrderStatus[OrderStatus["DISPATCHED"] = 4] = "DISPATCHED";
-    OrderStatus[OrderStatus["DELIVERED"] = 5] = "DELIVERED";
-    OrderStatus[OrderStatus["REJECTED"] = 6] = "REJECTED";
-    OrderStatus[OrderStatus["REFUNDED"] = 7] = "REFUNDED";
-    OrderStatus[OrderStatus["CANCELLED"] = 8] = "CANCELLED";
+    OrderStatus[OrderStatus["PROCESSING"] = 2] = "PROCESSING";
+    OrderStatus[OrderStatus["DISPATCHED"] = 3] = "DISPATCHED";
+    OrderStatus[OrderStatus["DELIVERED"] = 4] = "DELIVERED";
+    OrderStatus[OrderStatus["REJECTED"] = 5] = "REJECTED";
+    OrderStatus[OrderStatus["CANCELLED"] = 6] = "CANCELLED";
 })(OrderStatus = exports.OrderStatus || (exports.OrderStatus = {}));
 //# sourceMappingURL=types.js.map
