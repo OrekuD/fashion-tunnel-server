@@ -1,8 +1,8 @@
 import { getModelForClass, prop } from "@typegoose/typegoose";
 
 export class UserAddress {
-  @prop({ index: true })
-  public id?: string;
+  // @prop({ index: true })
+  // public id?: string;
 
   @prop({ required: true, index: true })
   public userId!: string;

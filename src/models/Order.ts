@@ -19,6 +19,9 @@ export class Order extends TimeStamps {
   public userId!: string;
 
   @prop({ required: true })
+  public userAddressId!: string;
+
+  @prop({ required: true })
   public orderNumber!: number;
 
   @prop({ required: true })

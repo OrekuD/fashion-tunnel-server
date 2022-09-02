@@ -84,6 +84,13 @@ export interface OrderProduct {
   total: number;
 }
 
+export interface Address {
+  id: string;
+  name: string;
+  addressLine: string;
+  postalCode: string;
+}
+
 export interface DetailedOrderProduct {
   id: string;
   price: number;

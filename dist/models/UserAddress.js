@@ -14,10 +14,6 @@ const typegoose_1 = require("@typegoose/typegoose");
 class UserAddress {
 }
 __decorate([
-    (0, typegoose_1.prop)({ index: true }),
-    __metadata("design:type", String)
-], UserAddress.prototype, "id", void 0);
-__decorate([
     (0, typegoose_1.prop)({ required: true, index: true }),
     __metadata("design:type", String)
 ], UserAddress.prototype, "userId", void 0);

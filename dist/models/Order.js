@@ -37,6 +37,10 @@ __decorate([
 ], Order.prototype, "userId", void 0);
 __decorate([
     (0, typegoose_1.prop)({ required: true }),
+    __metadata("design:type", String)
+], Order.prototype, "userAddressId", void 0);
+__decorate([
+    (0, typegoose_1.prop)({ required: true }),
     __metadata("design:type", Number)
 ], Order.prototype, "orderNumber", void 0);
 __decorate([

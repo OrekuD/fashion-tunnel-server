@@ -19,6 +19,8 @@ const Order_1 = __importDefault(require("../models/Order"));
 const OrderResource_1 = __importDefault(require("../resources/OrderResource"));
 const calculateOrder_1 = require("../utils/calculateOrder");
 const Product_1 = __importDefault(require("../models/Product"));
+const UserAddress_1 = __importDefault(require("../models/UserAddress"));
+const UserAddressResource_1 = __importDefault(require("../resources/UserAddressResource"));
 const getOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield User_1.default.findById(req.userId);
     if (!user) {
@@ -35,7 +37,10 @@ const getOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             .status(404)
             .json(new ErrorResource_1.default("Order not found", 404).toJSON());
     }
-    return res.status(200).json(new OrderResource_1.default(order).toJSON());
+    const userAddress = yield UserAddress_1.default.findById(order.userAddressId);
+    return res
+        .status(200)
+        .json(new OrderResource_1.default(order, userAddress ? new UserAddressResource_1.default(userAddress).toJSON() : null).toJSON());
 });
 const getUserOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield User_1.default.findById(req.userId);
@@ -47,9 +52,17 @@ const getUserOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     const orders = yield Order_1.default.find({ userId: req.userId }).sort({
         createdAt: -1,
     });
+    const data = [];
+    for (const order of orders) {
+        const address = yield UserAddress_1.default.findById(order.userAddressId);
+        data.push({
+            order,
+            address,
+        });
+    }
     return res
         .status(200)
-        .json(orders.map((order) => new OrderResource_1.default(order).toJSON()));
+        .json(data.map(({ order, address }) => new OrderResource_1.default(order, address ? new UserAddressResource_1.default(address).toJSON() : null).toJSON()));
 });
 const createNewOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield User_1.default.findById(req.userId);
@@ -94,8 +107,12 @@ const createNewOrder = (req, res) => __awaiter(void 0, void 0, void 0, function*
         userId: req.userId,
         products: orderProducts,
         orderStatus: types_1.OrderStatus.PENDING,
+        userAddressId: req.body.userAddressId,
     });
-    return res.status(200).json(new OrderResource_1.default(order).toJSON());
+    const userAddress = yield UserAddress_1.default.findById(order.userAddressId);
+    return res
+        .status(200)
+        .json(new OrderResource_1.default(order, userAddress ? new UserAddressResource_1.default(userAddress).toJSON() : null).toJSON());
 });
 const OrderController = {
     getUserOrders,

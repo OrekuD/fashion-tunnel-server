@@ -1,11 +1,13 @@
 import UserModel from "../models/User";
 import { IRequest, OrderProduct, OrderStatus, RouteHandler } from "../types";
 import ErrorResource from "../resources/ErrorResource";
-import OrderModel from "../models/Order";
+import OrderModel, { Order } from "../models/Order";
 import OrderResource from "../resources/OrderResource";
 import { calculateOrder } from "../utils/calculateOrder";
 import ProductModel from "../models/Product";
 import CreateOrderRequest from "../requests/CreateOrderRequest";
+import UserAddressModel, { UserAddress } from "../models/UserAddress";
+import UserAddressResource from "../resources/UserAddressResource";
 
 const getOrder: RouteHandler = async (req: IRequest<any>, res) => {
   const user = await UserModel.findById(req.userId);
@@ -23,7 +25,17 @@ const getOrder: RouteHandler = async (req: IRequest<any>, res) => {
       .status(404)
       .json(new ErrorResource("Order not found", 404).toJSON());
   }
-  return res.status(200).json(new OrderResource(order).toJSON());
+
+  const userAddress = await UserAddressModel.findById(order.userAddressId);
+
+  return res
+    .status(200)
+    .json(
+      new OrderResource(
+        order,
+        userAddress ? new UserAddressResource(userAddress).toJSON() : null
+      ).toJSON()
+    );
 };
 
 const getUserOrders: RouteHandler = async (req: IRequest<any>, res) => {
@@ -36,9 +48,27 @@ const getUserOrders: RouteHandler = async (req: IRequest<any>, res) => {
   const orders = await OrderModel.find({ userId: req.userId }).sort({
     createdAt: -1,
   });
+
+  const data: Array<{ order: Order; address: UserAddress | null }> = [];
+
+  for (const order of orders) {
+    const address = await UserAddressModel.findById(order.userAddressId);
+    data.push({
+      order,
+      address,
+    });
+  }
+
   return res
     .status(200)
-    .json(orders.map((order) => new OrderResource(order).toJSON()));
+    .json(
+      data.map(({ order, address }) =>
+        new OrderResource(
+          order,
+          address ? new UserAddressResource(address).toJSON() : null
+        ).toJSON()
+      )
+    );
 };
 
 const createNewOrder: RouteHandler = async (
@@ -95,8 +125,19 @@ const createNewOrder: RouteHandler = async (
     userId: req.userId,
     products: orderProducts,
     orderStatus: OrderStatus.PENDING,
+    userAddressId: req.body.userAddressId,
   });
-  return res.status(200).json(new OrderResource(order).toJSON());
+
+  const userAddress = await UserAddressModel.findById(order.userAddressId);
+
+  return res
+    .status(200)
+    .json(
+      new OrderResource(
+        order,
+        userAddress ? new UserAddressResource(userAddress).toJSON() : null
+      ).toJSON()
+    );
 };
 
 const OrderController = {
