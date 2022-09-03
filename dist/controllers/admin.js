@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const DetailedUserResource_1 = __importDefault(require("../resources/DetailedUserResource"));
 const User_1 = __importDefault(require("../models/User"));
+const types_1 = require("./../types");
 const ErrorResource_1 = __importDefault(require("../resources/ErrorResource"));
 const OkResource_1 = __importDefault(require("../resources/OkResource"));
 const Product_1 = __importDefault(require("../models/Product"));
@@ -22,6 +23,7 @@ const SimpleOrderResource_1 = __importDefault(require("../resources/SimpleOrderR
 const DetailedOrderResource_1 = __importDefault(require("../resources/DetailedOrderResource"));
 const DetailedProductResource_1 = __importDefault(require("../resources/DetailedProductResource"));
 const SocketManager_1 = __importDefault(require("../managers/SocketManager"));
+const OrderStatusResource_1 = __importDefault(require("../resources/OrderStatusResource"));
 const getAllUsers = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
     const users = yield User_1.default.find().sort({
         createdAt: -1,
@@ -128,9 +130,20 @@ const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     yield Product_1.default.findByIdAndDelete(req.params.productId);
     return res.status(200).json(new OkResource_1.default().toJSON());
 });
-const test = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    SocketManager_1.default.emitMessage("test", req.params.userId, { data: "yep" });
-    return res.status(200).json(new OkResource_1.default().toJSON());
+const updateOrderStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const order = yield Order_1.default.findById(req.body.orderId);
+    if (!order) {
+        return res
+            .status(404)
+            .json(new ErrorResource_1.default("Order not found", 404).toJSON());
+    }
+    yield Order_1.default.findByIdAndUpdate(order.id, {
+        orderStatus: req.body.status,
+    });
+    SocketManager_1.default.emitMessage(types_1.Events.ORDER_STATUS_CHANGE, order.userId, new OrderStatusResource_1.default(order.id, req.body.status).toJSON());
+    return res
+        .status(200)
+        .json(new OrderStatusResource_1.default(order.id, req.body.status).toJSON());
 });
 const AdminController = {
     getAllUsers,
@@ -142,7 +155,7 @@ const AdminController = {
     getUser,
     getProduct,
     getAllProducts,
-    test,
+    updateOrderStatus,
 };
 exports.default = AdminController;
 //# sourceMappingURL=admin.js.map

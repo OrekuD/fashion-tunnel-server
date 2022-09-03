@@ -1,10 +1,11 @@
 import ErrorResource from "../resources/ErrorResource";
 import UserModel from "../models/User";
-import { IRequest, RouteHandler } from "../types";
+import { Events, IRequest, RouteHandler } from "../types";
 import UserAddressModel from "../models/UserAddress";
 import UserAddressResource from "../resources/UserAddressResource";
 import AddNewAddressRequest from "../requests/AddNewAddressRequest";
 import OkResource from "../resources/OkResource";
+import SocketManager from "../managers/SocketManager";
 
 const getUserAddresses: RouteHandler = async (req: IRequest<any>, res) => {
   const user = await UserModel.findById(req.userId);
@@ -47,6 +48,11 @@ const addNewAddress: RouteHandler = async (
     postalCode: req.body.postalCode,
   });
 
+  SocketManager.emitMessage(
+    Events.USER_PROFILE_UPDATE,
+    user.id,
+    new UserAddressResource(userAddress).toJSON()
+  );
   return res.status(200).json(new UserAddressResource(userAddress).toJSON());
 };
 

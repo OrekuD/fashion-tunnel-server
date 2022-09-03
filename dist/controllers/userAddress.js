@@ -14,9 +14,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const ErrorResource_1 = __importDefault(require("../resources/ErrorResource"));
 const User_1 = __importDefault(require("../models/User"));
+const types_1 = require("../types");
 const UserAddress_1 = __importDefault(require("../models/UserAddress"));
 const UserAddressResource_1 = __importDefault(require("../resources/UserAddressResource"));
 const OkResource_1 = __importDefault(require("../resources/OkResource"));
+const SocketManager_1 = __importDefault(require("../managers/SocketManager"));
 const getUserAddresses = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield User_1.default.findById(req.userId);
     if (!user) {
@@ -46,6 +48,7 @@ const addNewAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         addressLine: req.body.addressLine,
         postalCode: req.body.postalCode,
     });
+    SocketManager_1.default.emitMessage(types_1.Events.USER_PROFILE_UPDATE, user.id, new UserAddressResource_1.default(userAddress).toJSON());
     return res.status(200).json(new UserAddressResource_1.default(userAddress).toJSON());
 });
 const updateAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* () {

@@ -1,6 +1,11 @@
 import DetailedUserResource from "../resources/DetailedUserResource";
 import UserModel from "../models/User";
-import { DetailedOrderProduct, IRequest, RouteHandler } from "./../types";
+import {
+  DetailedOrderProduct,
+  Events,
+  IRequest,
+  RouteHandler,
+} from "./../types";
 import ErrorResource from "../resources/ErrorResource";
 import OkResource from "../resources/OkResource";
 import ProductModel from "../models/Product";
@@ -10,6 +15,8 @@ import SimpleOrderResource from "../resources/SimpleOrderResource";
 import DetailedOrderResource from "../resources/DetailedOrderResource";
 import DetailedProductResource from "../resources/DetailedProductResource";
 import SocketManager from "../managers/SocketManager";
+import UpdateOrderStatusRequest from "../requests/UpdateOrderStatusRequest";
+import OrderStatusResource from "../resources/OrderStatusResource";
 
 const getAllUsers: RouteHandler = async (_, res) => {
   const users = await UserModel.find().sort({
@@ -132,12 +139,30 @@ const deleteProduct: RouteHandler = async (req, res) => {
   return res.status(200).json(new OkResource().toJSON());
 };
 
-// 62fc0872cf44f872c25870cc
+const updateOrderStatus: RouteHandler = async (
+  req: IRequest<UpdateOrderStatusRequest>,
+  res
+) => {
+  const order = await OrderModel.findById(req.body.orderId);
+  if (!order) {
+    return res
+      .status(404)
+      .json(new ErrorResource("Order not found", 404).toJSON());
+  }
 
-const test: RouteHandler = async (req, res) => {
-  SocketManager.emitMessage("test", req.params.userId, { data: "yep" });
-  // const orders = await OrderModel.find();
-  return res.status(200).json(new OkResource().toJSON());
+  await OrderModel.findByIdAndUpdate(order.id, {
+    orderStatus: req.body.status,
+  });
+
+  SocketManager.emitMessage(
+    Events.ORDER_STATUS_CHANGE,
+    order.userId,
+    new OrderStatusResource(order.id, req.body.status).toJSON()
+  );
+
+  return res
+    .status(200)
+    .json(new OrderStatusResource(order.id, req.body.status).toJSON());
 };
 
 const AdminController = {
@@ -150,7 +175,7 @@ const AdminController = {
   getUser,
   getProduct,
   getAllProducts,
-  test,
+  updateOrderStatus,
 };
 
 export default AdminController;

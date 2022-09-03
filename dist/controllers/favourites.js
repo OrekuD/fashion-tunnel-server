@@ -16,8 +16,10 @@ const OkResource_1 = __importDefault(require("../resources/OkResource"));
 const ProductResource_1 = __importDefault(require("../resources/ProductResource"));
 const ErrorResource_1 = __importDefault(require("../resources/ErrorResource"));
 const User_1 = __importDefault(require("../models/User"));
+const types_1 = require("./../types");
 const Favourite_1 = __importDefault(require("../models/Favourite"));
 const Product_1 = __importDefault(require("../models/Product"));
+const SocketManager_1 = __importDefault(require("../managers/SocketManager"));
 const updateFavourites = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield User_1.default.findById(req.userId);
     if (!user) {
@@ -48,6 +50,10 @@ const updateFavourites = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 .json(new ErrorResource_1.default("There was an issue adding your new favourite", 500).toJSON());
         }
     }
+    SocketManager_1.default.emitMessage(types_1.Events.USER_FAVOURITE_ITEM, user.id, {
+        product,
+        hasLiked: Boolean(alreadyAdded),
+    });
     return res.status(200).json(new OkResource_1.default().toJSON());
 });
 const getUserFavourites = (req, res) => __awaiter(void 0, void 0, void 0, function* () {

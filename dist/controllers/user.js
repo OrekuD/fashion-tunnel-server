@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.signout = exports.user = void 0;
+const types_1 = require("../types");
 const argon2_1 = __importDefault(require("argon2"));
 const fs_1 = __importDefault(require("fs"));
 const User_1 = __importDefault(require("../models/User"));
@@ -22,6 +23,7 @@ const AuthResource_1 = __importDefault(require("../resources/AuthResource"));
 const UserResource_1 = __importDefault(require("../resources/UserResource"));
 const ErrorResource_1 = __importDefault(require("../resources/ErrorResource"));
 const OkResource_1 = __importDefault(require("../resources/OkResource"));
+const SocketManager_1 = __importDefault(require("../managers/SocketManager"));
 const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const email = req.body.email.trim().toLowerCase();
     const firstname = req.body.firstname.trim();
@@ -166,6 +168,7 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     user.lastname = req.body.lastname.trim();
     user.activeAddressId = req.body.activeAddressId.trim();
     yield user.save();
+    SocketManager_1.default.emitMessage(types_1.Events.USER_PROFILE_UPDATE, user.id, new UserResource_1.default(user).toJSON());
     return res.status(200).json(new UserResource_1.default(user).toJSON());
 });
 const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {

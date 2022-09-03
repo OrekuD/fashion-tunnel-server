@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.OrderStatus = exports.ShoeSizes = exports.ClothSizes = exports.ProductGender = exports.ProductCategories = exports.DeviceTypes = void 0;
+exports.OrderStatus = exports.ShoeSizes = exports.ClothSizes = exports.ProductGender = exports.Events = exports.ProductCategories = exports.DeviceTypes = void 0;
 class DeviceTypes {
 }
 exports.DeviceTypes = DeviceTypes;
@@ -16,6 +16,14 @@ var ProductCategories;
     ProductCategories[ProductCategories["TROUSERS"] = 4] = "TROUSERS";
     ProductCategories[ProductCategories["JACKET"] = 5] = "JACKET";
 })(ProductCategories = exports.ProductCategories || (exports.ProductCategories = {}));
+var Events;
+(function (Events) {
+    Events["USER_ADDRESS_CREATE"] = "user:address:create";
+    Events["USER_ORDER_CREATE"] = "user:order:create";
+    Events["USER_PROFILE_UPDATE"] = "user:profile:update";
+    Events["USER_FAVOURITE_ITEM"] = "user:favourite:item";
+    Events["ORDER_STATUS_CHANGE"] = "order:status:change";
+})(Events = exports.Events || (exports.Events = {}));
 var ProductGender;
 (function (ProductGender) {
     ProductGender[ProductGender["WOMEN"] = 0] = "WOMEN";

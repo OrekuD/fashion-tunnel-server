@@ -1,6 +1,7 @@
 import UserModel from "../models/User";
 import {
   DetailedOrderProduct,
+  Events,
   IRequest,
   OrderProduct,
   OrderStatus,
@@ -14,6 +15,7 @@ import ProductModel from "../models/Product";
 import CreateOrderRequest from "../requests/CreateOrderRequest";
 import UserAddressModel, { UserAddress } from "../models/UserAddress";
 import UserAddressResource from "../resources/UserAddressResource";
+import SocketManager from "../managers/SocketManager";
 
 const getOrder: RouteHandler = async (req: IRequest<any>, res) => {
   const user = await UserModel.findById(req.userId);
@@ -206,6 +208,16 @@ const createNewOrder: RouteHandler = async (
       });
     }
   }
+
+  SocketManager.emitMessage(
+    Events.USER_PROFILE_UPDATE,
+    user.id,
+    new OrderResource(
+      order,
+      userAddress ? new UserAddressResource(userAddress).toJSON() : null,
+      detailedProducts
+    ).toJSON()
+  );
 
   return res
     .status(200)

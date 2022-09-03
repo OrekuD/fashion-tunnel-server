@@ -1,4 +1,4 @@
-import { IRequest, RouteHandler } from "../types";
+import { Events, IRequest, RouteHandler } from "../types";
 import argon2 from "argon2";
 import fs from "fs";
 import { UploadedFile } from "express-fileupload";
@@ -14,7 +14,8 @@ import SignUpRequest from "../requests/SignUpRequest";
 import SignInRequest from "../requests/SignInRequest";
 import UpdateUserRequest from "../requests/UpdateUserRequest";
 import ValidateEmailRequest from "../requests/ValidateEmailRequest";
-import ChangePasswordRequest from "src/requests/ChangePasswordRequest";
+import ChangePasswordRequest from "../requests/ChangePasswordRequest";
+import SocketManager from "../managers/SocketManager";
 
 const signup: RouteHandler = async (
   req: IRequest<SignUpRequest>,
@@ -205,6 +206,11 @@ const updateUser: RouteHandler = async (
   //     lastname: req.body.lastname.trim(),
   //   }
   // );
+  SocketManager.emitMessage(
+    Events.USER_PROFILE_UPDATE,
+    user.id,
+    new UserResource(user).toJSON()
+  );
 
   return res.status(200).json(new UserResource(user).toJSON());
 };

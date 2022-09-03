@@ -2,9 +2,10 @@ import OkResource from "../resources/OkResource";
 import ProductResource from "../resources/ProductResource";
 import ErrorResource from "../resources/ErrorResource";
 import UserModel from "../models/User";
-import { IRequest, RouteHandler } from "./../types";
+import { Events, IRequest, RouteHandler } from "./../types";
 import FavouriteModel from "../models/Favourite";
 import ProductModel from "../models/Product";
+import SocketManager from "../managers/SocketManager";
 
 const updateFavourites: RouteHandler = async (
   req: IRequest<{ productId: string }>,
@@ -47,6 +48,10 @@ const updateFavourites: RouteHandler = async (
     }
   }
 
+  SocketManager.emitMessage(Events.USER_FAVOURITE_ITEM, user.id, {
+    product,
+    hasLiked: Boolean(alreadyAdded),
+  });
   return res.status(200).json(new OkResource().toJSON());
 };
 

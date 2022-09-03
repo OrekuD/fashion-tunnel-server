@@ -29,6 +29,14 @@ export enum ProductCategories {
   JACKET = 5,
 }
 
+export enum Events {
+  USER_ADDRESS_CREATE = "user:address:create", // done
+  USER_ORDER_CREATE = "user:order:create", // done
+  USER_PROFILE_UPDATE = "user:profile:update", // done
+  USER_FAVOURITE_ITEM = "user:favourite:item", // done
+  ORDER_STATUS_CHANGE = "order:status:change",
+}
+
 export enum ProductGender {
   WOMEN = 0,
   MEN = 1,
