@@ -57,6 +57,7 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             email,
             password: hashedPassword,
             deviceType,
+            activeAddressId: "",
         });
         return res.status(200).json(new AuthResource_1.default(user, deviceType).toJSON());
     }
@@ -163,6 +164,8 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     user.email = req.body.email.trim().toLowerCase();
     user.firstname = req.body.firstname.trim();
     user.lastname = req.body.lastname.trim();
+    user.activeAddressId = req.body.activeAddressId.trim();
+    console.log("y");
     yield user.save();
     return res.status(200).json(new UserResource_1.default(user).toJSON());
 });

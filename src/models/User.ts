@@ -18,6 +18,9 @@ export class User extends TimeStamps {
   public password!: string;
 
   @prop({ required: true })
+  public activeAddressId!: string;
+
+  @prop({ required: true })
   public deviceType!: string;
 }
 

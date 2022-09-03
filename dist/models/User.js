@@ -37,6 +37,10 @@ __decorate([
 __decorate([
     (0, typegoose_1.prop)({ required: true }),
     __metadata("design:type", String)
+], User.prototype, "activeAddressId", void 0);
+__decorate([
+    (0, typegoose_1.prop)({ required: true }),
+    __metadata("design:type", String)
 ], User.prototype, "deviceType", void 0);
 exports.User = User;
 const UserModel = (0, typegoose_1.getModelForClass)(User, {

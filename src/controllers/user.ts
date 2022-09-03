@@ -57,6 +57,7 @@ const signup: RouteHandler = async (
       email,
       password: hashedPassword,
       deviceType,
+      activeAddressId: "",
     });
 
     return res.status(200).json(new AuthResource(user, deviceType).toJSON());
@@ -192,6 +193,7 @@ const updateUser: RouteHandler = async (
   user.email = req.body.email.trim().toLowerCase();
   user.firstname = req.body.firstname.trim();
   user.lastname = req.body.lastname.trim();
+  user.activeAddressId = req.body.activeAddressId.trim();
 
   await user.save();
 

@@ -2,7 +2,6 @@ import express, { Response } from "express";
 import http from "http";
 import { Server } from "socket.io";
 import cors from "cors";
-import onSocketConnect from "./utils/onSocketConnect";
 import routes from "./routes";
 import fileUpload from "express-fileupload";
 import { configureCloudinary } from "./integrations/cloudinary";
@@ -28,9 +27,6 @@ const main = async () => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   await seeder();
-
-  // const socketClients: Array<{ id: string; userId: string }> = [];
-  // io.on("connection", (socket) => onSocketConnect(socket, socketClients));
 
   const port = config.PORT || 4000;
 

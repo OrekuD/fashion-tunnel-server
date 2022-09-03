@@ -5,12 +5,14 @@ class UserResource {
         this.email = user.email;
         this.firstname = user.firstname;
         this.lastname = user.lastname;
+        this.activeAddressId = user.activeAddressId;
     }
     toJSON() {
         return {
             email: this.email,
             firstname: this.firstname,
             lastname: this.lastname,
+            activeAddressId: this.activeAddressId,
         };
     }
 }
