@@ -2,14 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const defaultClasses_1 = require("@typegoose/typegoose/lib/defaultClasses");
 class SimpleOrderResource extends defaultClasses_1.TimeStamps {
-    constructor(order, user, numberOfProducts) {
+    constructor(order, user) {
         super();
         this.id = order._id;
         this.total = order.total;
         this.orderNumber = order.orderNumber;
         this.orderStatus = order.orderStatus;
         this.createdAt = order.createdAt;
-        this.numberOfProducts = numberOfProducts;
+        this.numberOfProducts = order.products.length;
         this.user = {
             id: user === null || user === void 0 ? void 0 : user._id,
             email: user.email,

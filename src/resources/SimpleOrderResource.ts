@@ -14,14 +14,14 @@ export default class SimpleOrderResource extends TimeStamps {
     email: string;
   };
 
-  constructor(order: Order, user: User, numberOfProducts: number) {
+  constructor(order: Order, user: User) {
     super();
     this.id = (order as any)._id;
     this.total = order.total;
     this.orderNumber = order.orderNumber;
     this.orderStatus = order.orderStatus;
     this.createdAt = order.createdAt;
-    this.numberOfProducts = numberOfProducts;
+    this.numberOfProducts = order.products.length;
     this.user = {
       id: (user as any)?._id,
       email: user.email!,

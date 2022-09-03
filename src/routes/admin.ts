@@ -5,6 +5,7 @@ const router = Router();
 
 router.get("/orders", AdminController.getAllOrders);
 router.get("/orders/:orderId", AdminController.getOrder);
+router.put("/orders/:orderId/update-status", AdminController.updateOrderStatus);
 
 router.get("/income", AdminController.getIncome);
 

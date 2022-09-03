@@ -8,6 +8,7 @@ const admin_1 = __importDefault(require("../controllers/admin"));
 const router = (0, express_1.Router)();
 router.get("/orders", admin_1.default.getAllOrders);
 router.get("/orders/:orderId", admin_1.default.getOrder);
+router.put("/orders/:orderId/update-status", admin_1.default.updateOrderStatus);
 router.get("/income", admin_1.default.getIncome);
 router.get("/users", admin_1.default.getAllUsers);
 router.get("/users/:userId", admin_1.default.getUser);

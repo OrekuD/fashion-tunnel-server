@@ -17,6 +17,7 @@ import DetailedProductResource from "../resources/DetailedProductResource";
 import SocketManager from "../managers/SocketManager";
 import UpdateOrderStatusRequest from "../requests/UpdateOrderStatusRequest";
 import OrderStatusResource from "../resources/OrderStatusResource";
+import IncomeResource from "../resources/IncomeResource";
 
 const getAllUsers: RouteHandler = async (_, res) => {
   const users = await UserModel.find().sort({
@@ -31,7 +32,11 @@ const getIncome: RouteHandler = async (_, res) => {
   const orders = await OrderModel.find();
   return res
     .status(200)
-    .json({ amount: orders.reduce((sum, order) => sum + order.total, 0) });
+    .json(
+      new IncomeResource(
+        orders.reduce((sum, order) => sum + order.total, 0)
+      ).toJSON()
+    );
 };
 
 const getAllOrders: RouteHandler = async (_, res) => {
@@ -42,9 +47,7 @@ const getAllOrders: RouteHandler = async (_, res) => {
   const response: Array<any> = [];
   for (const order of orders) {
     const user = await UserModel.findById(order.userId);
-    response.push(
-      new SimpleOrderResource(order, user!, order.products.length).toJSON()
-    );
+    response.push(new SimpleOrderResource(order, user!).toJSON());
   }
   return res.status(200).json(response);
 };
@@ -143,7 +146,7 @@ const updateOrderStatus: RouteHandler = async (
   req: IRequest<UpdateOrderStatusRequest>,
   res
 ) => {
-  const order = await OrderModel.findById(req.body.orderId);
+  const order = await OrderModel.findById(req.params.orderId);
   if (!order) {
     return res
       .status(404)

@@ -24,6 +24,7 @@ const DetailedOrderResource_1 = __importDefault(require("../resources/DetailedOr
 const DetailedProductResource_1 = __importDefault(require("../resources/DetailedProductResource"));
 const SocketManager_1 = __importDefault(require("../managers/SocketManager"));
 const OrderStatusResource_1 = __importDefault(require("../resources/OrderStatusResource"));
+const IncomeResource_1 = __importDefault(require("../resources/IncomeResource"));
 const getAllUsers = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
     const users = yield User_1.default.find().sort({
         createdAt: -1,
@@ -36,7 +37,7 @@ const getIncome = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
     const orders = yield Order_1.default.find();
     return res
         .status(200)
-        .json({ amount: orders.reduce((sum, order) => sum + order.total, 0) });
+        .json(new IncomeResource_1.default(orders.reduce((sum, order) => sum + order.total, 0)).toJSON());
 });
 const getAllOrders = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
     const orders = yield Order_1.default.find().sort({
@@ -45,7 +46,7 @@ const getAllOrders = (_, res) => __awaiter(void 0, void 0, void 0, function* () 
     const response = [];
     for (const order of orders) {
         const user = yield User_1.default.findById(order.userId);
-        response.push(new SimpleOrderResource_1.default(order, user, order.products.length).toJSON());
+        response.push(new SimpleOrderResource_1.default(order, user).toJSON());
     }
     return res.status(200).json(response);
 });
@@ -131,7 +132,7 @@ const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     return res.status(200).json(new OkResource_1.default().toJSON());
 });
 const updateOrderStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const order = yield Order_1.default.findById(req.body.orderId);
+    const order = yield Order_1.default.findById(req.params.orderId);
     if (!order) {
         return res
             .status(404)
