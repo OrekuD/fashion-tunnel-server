@@ -21,6 +21,7 @@ const main = async () => {
     cors: {
       origin: "*",
     },
+    transports: ["websocket"],
   });
   app.use(cors({ origin: "*" }));
   app.use(fileUpload());

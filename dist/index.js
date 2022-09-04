@@ -33,6 +33,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         cors: {
             origin: "*",
         },
+        transports: ["websocket"],
     });
     app.use((0, cors_1.default)({ origin: "*" }));
     app.use((0, express_fileupload_1.default)());
