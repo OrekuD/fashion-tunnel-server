@@ -29,8 +29,20 @@ class SocketManager {
             console.log({ error });
           }
           if (user.userId) {
-            this.connectedClients.push({ id: socket.id, userId: user.userId });
-            console.log("---");
+            const index = this.alreadyConnected(user.userId);
+            if (index < 0) {
+              this.connectedClients.push({
+                id: socket.id,
+                userId: user.userId,
+              });
+              // console.log("---");
+            } else {
+              // this.connectedClients.splice(index, 1);
+              this.connectedClients.push({
+                id: socket.id,
+                userId: user.userId,
+              });
+            }
             console.info(
               `Socket ${socket.id} with user id ${user.userId} has connected.`
             );
@@ -40,22 +52,43 @@ class SocketManager {
     }
 
     socket.on("disconnect", () => {
+      console.log({ beforelength: this.connectedClients.length });
       this.connectedClients = this.connectedClients.filter(
         ({ id }) => id !== socket.id
       );
-      console.info(`Socket ${socket.id} with accesstoken has disconnected.`);
+      console.log({ afterlength: this.connectedClients.length });
+      console.info(`Socket ${socket.id} has disconnected.`);
     });
   }
 
   emitMessage(event: string, userId: string, data: any) {
-    if (!this.socket) return;
-    const socketId = this.getSocketId(userId);
-    if (!socketId) return;
-    this.socket.to(socketId).emit(event, data);
+    const socketIds = this.getSocketIds(userId);
+    if (socketIds.length === 0) return;
+    socketIds.forEach((socketId) => {
+      if (!this.socket) return;
+      this.socket.to(socketId).emit(event, data, (err: any, success: any) => {
+        if (err) {
+          console.log(`Event: ${event} was not emmitted`);
+        }
+        if (success) {
+          console.log(`Event: ${event} was emmitted ${success}`);
+        }
+      });
+    });
   }
 
   getSocketId(user: string) {
     return this.connectedClients.find(({ userId }) => userId === user)?.id;
+  }
+
+  alreadyConnected(user: string) {
+    return this.connectedClients.findIndex(({ userId }) => userId === user);
+  }
+
+  getSocketIds(user: string) {
+    return this.connectedClients
+      .filter(({ userId }) => userId === user)
+      .map(({ id }) => id);
   }
 }
 
