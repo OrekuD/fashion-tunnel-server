@@ -153,19 +153,42 @@ const updateOrderStatus: RouteHandler = async (
       .json(new ErrorResource("Order not found", 404).toJSON());
   }
 
-  await OrderModel.findByIdAndUpdate(order.id, {
-    orderStatus: req.body.status,
-  });
+  // await OrderModel.findByIdAndUpdate(order.id, {
+  //   status: req.body.status,
+  // });
+
+  const statusIndex = order.statusTimeStamps.findIndex(
+    ({ status }) => status === req.body.status
+  );
+
+  const timeStamp = new Date().toISOString();
+  if (statusIndex < 0) {
+    order.statusTimeStamps.unshift({
+      status: req.body.status,
+      time: timeStamp,
+    });
+  } else {
+    order.statusTimeStamps.splice(statusIndex, 1, {
+      status: req.body.status,
+      time: timeStamp,
+    });
+  }
+
+  order.status = req.body.status;
+
+  await order.save();
 
   SocketManager.emitMessage(
     Events.ORDER_STATUS_CHANGE,
     order.userId,
-    new OrderStatusResource(order.id, req.body.status).toJSON()
+    new OrderStatusResource(order.id, req.body.status, timeStamp).toJSON()
   );
 
   return res
     .status(200)
-    .json(new OrderStatusResource(order.id, req.body.status).toJSON());
+    .json(
+      new OrderStatusResource(order.id, req.body.status, timeStamp).toJSON()
+    );
 };
 
 const AdminController = {

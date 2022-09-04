@@ -46,7 +46,11 @@ __decorate([
 __decorate([
     (0, typegoose_1.prop)({ required: true }),
     __metadata("design:type", Number)
-], Order.prototype, "orderStatus", void 0);
+], Order.prototype, "status", void 0);
+__decorate([
+    (0, typegoose_1.prop)({ required: true }),
+    __metadata("design:type", Array)
+], Order.prototype, "statusTimeStamps", void 0);
 exports.Order = Order;
 const OrderModel = (0, typegoose_1.getModelForClass)(Order, {
     schemaOptions: {

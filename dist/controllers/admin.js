@@ -138,13 +138,26 @@ const updateOrderStatus = (req, res) => __awaiter(void 0, void 0, void 0, functi
             .status(404)
             .json(new ErrorResource_1.default("Order not found", 404).toJSON());
     }
-    yield Order_1.default.findByIdAndUpdate(order.id, {
-        orderStatus: req.body.status,
-    });
-    SocketManager_1.default.emitMessage(types_1.Events.ORDER_STATUS_CHANGE, order.userId, new OrderStatusResource_1.default(order.id, req.body.status).toJSON());
+    const statusIndex = order.statusTimeStamps.findIndex(({ status }) => status === req.body.status);
+    const timeStamp = new Date().toISOString();
+    if (statusIndex < 0) {
+        order.statusTimeStamps.unshift({
+            status: req.body.status,
+            time: timeStamp,
+        });
+    }
+    else {
+        order.statusTimeStamps.splice(statusIndex, 1, {
+            status: req.body.status,
+            time: timeStamp,
+        });
+    }
+    order.status = req.body.status;
+    yield order.save();
+    SocketManager_1.default.emitMessage(types_1.Events.ORDER_STATUS_CHANGE, order.userId, new OrderStatusResource_1.default(order.id, req.body.status, timeStamp).toJSON());
     return res
         .status(200)
-        .json(new OrderStatusResource_1.default(order.id, req.body.status).toJSON());
+        .json(new OrderStatusResource_1.default(order.id, req.body.status, timeStamp).toJSON());
 });
 const AdminController = {
     getAllUsers,

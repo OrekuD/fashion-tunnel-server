@@ -11,7 +11,7 @@ export default class DetailedOrderResource extends TimeStamps {
   private discount: number;
   private orderNumber: number;
   private products: Array<DetailedOrderProduct>;
-  private orderStatus: OrderStatus;
+  private status: OrderStatus;
   private user: User | null;
 
   constructor(
@@ -25,7 +25,7 @@ export default class DetailedOrderResource extends TimeStamps {
     this.subtotal = order.subtotal;
     this.discount = order.discount;
     this.orderNumber = order.orderNumber;
-    this.orderStatus = order.orderStatus;
+    this.status = order.status;
     this.createdAt = order.createdAt;
     this.products = products;
     this.user = user;
@@ -38,7 +38,7 @@ export default class DetailedOrderResource extends TimeStamps {
       subtotal: this.subtotal,
       discount: this.discount,
       orderNumber: this.orderNumber,
-      orderStatus: this.orderStatus,
+      status: this.status,
       createdAt: this.createdAt,
       products: this.products,
       user: this.user ? new DetailedUserResource(this.user).toJSON() : null,

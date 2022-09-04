@@ -8,7 +8,7 @@ export default class SimpleOrderResource extends TimeStamps {
   private total: number;
   private orderNumber: number;
   private numberOfProducts: number;
-  private orderStatus: OrderStatus;
+  private status: OrderStatus;
   private user: {
     id: string;
     email: string;
@@ -19,7 +19,7 @@ export default class SimpleOrderResource extends TimeStamps {
     this.id = (order as any)._id;
     this.total = order.total;
     this.orderNumber = order.orderNumber;
-    this.orderStatus = order.orderStatus;
+    this.status = order.status;
     this.createdAt = order.createdAt;
     this.numberOfProducts = order.products.length;
     this.user = {
@@ -33,7 +33,7 @@ export default class SimpleOrderResource extends TimeStamps {
       id: this.id,
       total: this.total,
       orderNumber: this.orderNumber,
-      orderStatus: this.orderStatus,
+      status: this.status,
       createdAt: this.createdAt,
       numberOfProducts: this.numberOfProducts,
       user: this.user,

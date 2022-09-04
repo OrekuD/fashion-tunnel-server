@@ -182,7 +182,7 @@ const createNewOrder: RouteHandler = async (
     discount,
     userId: req.userId,
     products: orderProducts,
-    orderStatus: OrderStatus.PENDING,
+    status: OrderStatus.PENDING,
     userAddressId: req.body.userAddressId,
   });
 

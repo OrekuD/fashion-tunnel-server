@@ -1,6 +1,6 @@
 import { prop, getModelForClass } from "@typegoose/typegoose";
 import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
-import { OrderProduct, OrderStatus } from "../types";
+import { OrderProduct, OrderStatus, OrderStatusTimeStamp } from "../types";
 
 export class Order extends TimeStamps {
   @prop({ required: true })
@@ -25,7 +25,10 @@ export class Order extends TimeStamps {
   public orderNumber!: number;
 
   @prop({ required: true })
-  public orderStatus!: OrderStatus;
+  public status!: OrderStatus;
+
+  @prop({ required: true })
+  public statusTimeStamps!: Array<OrderStatusTimeStamp>;
 }
 
 const OrderModel = getModelForClass(Order, {

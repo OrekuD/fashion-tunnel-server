@@ -13,7 +13,7 @@ class DetailedOrderResource extends defaultClasses_1.TimeStamps {
         this.subtotal = order.subtotal;
         this.discount = order.discount;
         this.orderNumber = order.orderNumber;
-        this.orderStatus = order.orderStatus;
+        this.status = order.status;
         this.createdAt = order.createdAt;
         this.products = products;
         this.user = user;
@@ -25,7 +25,7 @@ class DetailedOrderResource extends defaultClasses_1.TimeStamps {
             subtotal: this.subtotal,
             discount: this.discount,
             orderNumber: this.orderNumber,
-            orderStatus: this.orderStatus,
+            status: this.status,
             createdAt: this.createdAt,
             products: this.products,
             user: this.user ? new DetailedUserResource_1.default(this.user).toJSON() : null,

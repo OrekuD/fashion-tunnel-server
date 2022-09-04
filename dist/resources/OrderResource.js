@@ -9,10 +9,11 @@ class OrderResource extends defaultClasses_1.TimeStamps {
         this.subtotal = order.subtotal;
         this.discount = order.discount;
         this.orderNumber = order.orderNumber;
-        this.orderStatus = order.orderStatus;
+        this.status = order.status;
         this.createdAt = order.createdAt;
         this.products = products;
         this.deliveryAddress = deliveryAddress;
+        this.statusTimeStamps = order.statusTimeStamps;
     }
     toJSON() {
         return {
@@ -21,10 +22,11 @@ class OrderResource extends defaultClasses_1.TimeStamps {
             subtotal: this.subtotal,
             discount: this.discount,
             orderNumber: this.orderNumber,
-            orderStatus: this.orderStatus,
+            status: this.status,
             products: this.products,
             createdAt: this.createdAt,
             deliveryAddress: this.deliveryAddress,
+            statusTimeStamps: this.statusTimeStamps,
         };
     }
 }

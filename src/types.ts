@@ -29,6 +29,11 @@ export enum ProductCategories {
   JACKET = 5,
 }
 
+export interface OrderStatusTimeStamp {
+  status: OrderStatus;
+  time: string;
+}
+
 export enum Events {
   USER_ADDRESS_CREATE = "user:address:create", // done
   USER_ORDER_CREATE = "user:order:create", // done

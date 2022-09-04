@@ -148,7 +148,7 @@ const createNewOrder = (req, res) => __awaiter(void 0, void 0, void 0, function*
         discount,
         userId: req.userId,
         products: orderProducts,
-        orderStatus: types_1.OrderStatus.PENDING,
+        status: types_1.OrderStatus.PENDING,
         userAddressId: req.body.userAddressId,
     });
     const userAddress = yield UserAddress_1.default.findById(order.userAddressId);
