@@ -63,6 +63,7 @@ const signup: RouteHandler = async (
 
     return res.status(200).json(new AuthResource(user, deviceType).toJSON());
   } catch (err) {
+    // console.log({ err });
     return res
       .status(500)
       .json(new ErrorResource("User creation unsuccessfully", 500).toJSON());
