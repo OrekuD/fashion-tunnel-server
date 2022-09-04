@@ -28,6 +28,7 @@ class SocketManager {
                         });
                     }
                     else {
+                        this.connectedClients.splice(index, 1);
                         this.connectedClients.push({
                             id: socket.id,
                             userId: user.userId,
@@ -51,10 +52,10 @@ class SocketManager {
                 return;
             this.socket.to(socketId).emit(event, data, (err, success) => {
                 if (err) {
-                    console.log(`Event: ${event} was not emmitted`);
+                    console.log(`Event: ${event} was not emmitted to ${socketId}`);
                 }
                 if (success) {
-                    console.log(`Event: ${event} was emmitted`);
+                    console.log(`Event: ${event} was emmitted to ${socketId}`);
                 }
             });
         });
