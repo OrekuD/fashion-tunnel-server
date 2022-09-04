@@ -175,7 +175,7 @@ const createNewOrder = (req, res) => __awaiter(void 0, void 0, void 0, function*
             });
         }
     }
-    SocketManager_1.default.emitMessage(types_1.Events.USER_PROFILE_UPDATE, user.id, new OrderResource_1.default(order, userAddress ? new UserAddressResource_1.default(userAddress).toJSON() : null, detailedProducts).toJSON());
+    SocketManager_1.default.emitMessage(types_1.Events.USER_ORDER_CREATE, user.id, new OrderResource_1.default(order, userAddress ? new UserAddressResource_1.default(userAddress).toJSON() : null, detailedProducts).toJSON());
     return res
         .status(200)
         .json(new OrderResource_1.default(order, userAddress ? new UserAddressResource_1.default(userAddress).toJSON() : null, detailedProducts).toJSON());

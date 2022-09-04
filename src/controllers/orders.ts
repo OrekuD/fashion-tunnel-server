@@ -213,7 +213,7 @@ const createNewOrder: RouteHandler = async (
   }
 
   SocketManager.emitMessage(
-    Events.USER_PROFILE_UPDATE,
+    Events.USER_ORDER_CREATE,
     user.id,
     new OrderResource(
       order,

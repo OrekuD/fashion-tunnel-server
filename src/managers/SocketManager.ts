@@ -29,20 +29,24 @@ class SocketManager {
             console.log({ error });
           }
           if (user.userId) {
-            const index = this.alreadyConnected(user.userId);
-            if (index < 0) {
-              this.connectedClients.push({
-                id: socket.id,
-                userId: user.userId,
-              });
-              // console.log("---");
-            } else {
-              this.connectedClients.splice(index, 1);
-              this.connectedClients.push({
-                id: socket.id,
-                userId: user.userId,
-              });
-            }
+            // const index = this.alreadyConnected(user.userId);
+            // if (index < 0) {
+            //   this.connectedClients.push({
+            //     id: socket.id,
+            //     userId: user.userId,
+            //   });
+            //   // console.log("---");
+            // } else {
+            //   this.connectedClients.splice(index, 1);
+            //   this.connectedClients.push({
+            //     id: socket.id,
+            //     userId: user.userId,
+            //   });
+            // }
+            this.connectedClients.push({
+              id: socket.id,
+              userId: user.userId,
+            });
             console.info(
               `Socket ${socket.id} with user id ${user.userId} has connected.`
             );
@@ -72,10 +76,10 @@ class SocketManager {
       }
       this.socket.to(socketId).emit(event, data, (err: any, success: any) => {
         if (err) {
-          console.log(`Event: ${event} was not emmitted to ${socketId}`);
+          console.log(`Event: ${event} was not emitted to ${socketId}`);
         }
         if (success) {
-          console.log(`Event: ${event} was emmitted to ${socketId}`);
+          console.log(`Event: ${event} was emitted to ${socketId}`);
         }
       });
     });
