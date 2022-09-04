@@ -150,6 +150,9 @@ const createNewOrder = (req, res) => __awaiter(void 0, void 0, void 0, function*
         products: orderProducts,
         status: types_1.OrderStatus.PENDING,
         userAddressId: req.body.userAddressId,
+        statusTimeStamps: [
+            { status: types_1.OrderStatus.PENDING, time: new Date().toISOString() },
+        ],
     });
     const userAddress = yield UserAddress_1.default.findById(order.userAddressId);
     const detailedProducts = [];

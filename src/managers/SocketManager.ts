@@ -52,11 +52,9 @@ class SocketManager {
     }
 
     socket.on("disconnect", () => {
-      console.log({ beforelength: this.connectedClients.length });
       this.connectedClients = this.connectedClients.filter(
         ({ id }) => id !== socket.id
       );
-      console.log({ afterlength: this.connectedClients.length });
       console.info(`Socket ${socket.id} has disconnected.`);
     });
   }
@@ -71,7 +69,7 @@ class SocketManager {
           console.log(`Event: ${event} was not emmitted`);
         }
         if (success) {
-          console.log(`Event: ${event} was emmitted ${success}`);
+          console.log(`Event: ${event} was emmitted`);
         }
       });
     });

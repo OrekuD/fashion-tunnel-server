@@ -14,6 +14,7 @@ class SimpleOrderResource extends defaultClasses_1.TimeStamps {
             id: user === null || user === void 0 ? void 0 : user._id,
             email: user.email,
         };
+        this.statusTimeStamps = order.statusTimeStamps;
     }
     toJSON() {
         return {
@@ -24,6 +25,7 @@ class SimpleOrderResource extends defaultClasses_1.TimeStamps {
             createdAt: this.createdAt,
             numberOfProducts: this.numberOfProducts,
             user: this.user,
+            statusTimeStamps: this.statusTimeStamps,
         };
     }
 }

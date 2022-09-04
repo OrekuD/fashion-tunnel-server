@@ -1,6 +1,6 @@
 import { User } from "../models/User";
 import { Order } from "../models/Order";
-import { OrderStatus } from "../types";
+import { OrderStatus, OrderStatusTimeStamp } from "../types";
 import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
 
 export default class SimpleOrderResource extends TimeStamps {
@@ -13,6 +13,7 @@ export default class SimpleOrderResource extends TimeStamps {
     id: string;
     email: string;
   };
+  private statusTimeStamps: Array<OrderStatusTimeStamp>;
 
   constructor(order: Order, user: User) {
     super();
@@ -26,6 +27,7 @@ export default class SimpleOrderResource extends TimeStamps {
       id: (user as any)?._id,
       email: user.email!,
     };
+    this.statusTimeStamps = order.statusTimeStamps;
   }
 
   toJSON() {
@@ -37,6 +39,7 @@ export default class SimpleOrderResource extends TimeStamps {
       createdAt: this.createdAt,
       numberOfProducts: this.numberOfProducts,
       user: this.user,
+      statusTimeStamps: this.statusTimeStamps,
     };
   }
 }

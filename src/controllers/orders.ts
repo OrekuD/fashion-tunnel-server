@@ -184,6 +184,9 @@ const createNewOrder: RouteHandler = async (
     products: orderProducts,
     status: OrderStatus.PENDING,
     userAddressId: req.body.userAddressId,
+    statusTimeStamps: [
+      { status: OrderStatus.PENDING, time: new Date().toISOString() },
+    ],
   });
 
   const userAddress = await UserAddressModel.findById(order.userAddressId);
