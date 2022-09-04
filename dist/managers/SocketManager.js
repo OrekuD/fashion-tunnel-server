@@ -45,11 +45,15 @@ class SocketManager {
     }
     emitMessage(event, userId, data) {
         const socketIds = this.getSocketIds(userId);
-        if (socketIds.length === 0)
+        if (socketIds.length === 0) {
+            console.log("no socket ids found");
             return;
+        }
         socketIds.forEach((socketId) => {
-            if (!this.socket)
+            if (!this.socket) {
+                console.log("socket not initialized");
                 return;
+            }
             this.socket.to(socketId).emit(event, data, (err, success) => {
                 if (err) {
                     console.log(`Event: ${event} was not emmitted to ${socketId}`);
