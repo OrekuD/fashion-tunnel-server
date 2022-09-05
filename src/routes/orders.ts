@@ -5,7 +5,7 @@ import OrderController from "../controllers/orders";
 const router = Router();
 
 router.get("/", validateUser, OrderController.getUserOrders);
-router.get("/:orderId", validateUser, OrderController.getUserOrders);
+router.get("/:orderId", validateUser, OrderController.getOrder);
 router.post("/", validateUser, OrderController.createNewOrder);
 
 export default router;
