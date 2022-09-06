@@ -34,29 +34,26 @@ class SocketManager {
         });
     }
     emitMessage(event, userId, data) {
-        const socketIds = this.getSocketIds(userId);
         const roomName = this.getRoom(userId);
         if (!roomName) {
             console.log("no room assigned");
             return;
         }
-        if (socketIds.length === 0) {
-            console.log("no socket ids found");
+        if (!this.socket) {
+            console.log("socket not initialized");
             return;
         }
-        socketIds.forEach((socketId) => {
-            if (!this.socket) {
-                console.log("socket not initialized");
-                return;
+        if (!this.io) {
+            console.log("io not initialized");
+            return;
+        }
+        this.socket.to(roomName).emit(event, data, (err, success) => {
+            if (err) {
+                console.log(`Event: ${event} was not emitted to ${roomName}`);
             }
-            this.socket.to(roomName).emit(event, data, (err, success) => {
-                if (err) {
-                    console.log(`Event: ${event} was not emitted to ${socketId}`);
-                }
-                if (success) {
-                    console.log(`Event: ${event} was emitted to ${socketId}`);
-                }
-            });
+            if (success) {
+                console.log(`Event: ${event} was emitted to ${roomName}`);
+            }
         });
     }
     getSocketId(user) {
