@@ -44,7 +44,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         res.send("Yoo");
     });
     app.use(routes_1.default);
-    io.on("connection", (socket) => SocketManager_1.default.connect(socket));
+    io.on("connection", (socket) => SocketManager_1.default.connect(socket, io));
     server.listen(port, () => {
         if (config_1.default.NODE_ENV === "development") {
             console.info(`⚡️[server]: Server is running at http://localhost:${port}`);

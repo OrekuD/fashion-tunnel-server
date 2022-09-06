@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { Socket } from "socket.io";
+import { Socket, Server } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import config from "../config";
 
@@ -11,13 +11,21 @@ class SocketManager {
     DefaultEventsMap,
     any
   > | null = null;
+  private io: Server<
+    DefaultEventsMap,
+    DefaultEventsMap,
+    DefaultEventsMap,
+    any
+  > | null = null;
 
   constructor() {}
 
   connect(
-    socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
+    socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
+    io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
   ) {
     this.socket = socket;
+    this.io = io;
     const authorization = socket.handshake.query?.authorization;
 
     if (authorization) {
@@ -70,11 +78,15 @@ class SocketManager {
       return;
     }
     socketIds.forEach((socketId) => {
-      if (!this.socket) {
-        console.log("socket not initialized");
+      // if (!this.socket) {
+      //   console.log("socket not initialized");
+      //   return;
+      // }
+      if (!this.io) {
+        console.log("io not initialized");
         return;
       }
-      this.socket.to(socketId).emit(event, data, (err: any, success: any) => {
+      this.io.to(socketId).emit(event, data, (err: any, success: any) => {
         if (err) {
           console.log(`Event: ${event} was not emitted to ${socketId}`);
         }

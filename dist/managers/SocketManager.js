@@ -9,10 +9,12 @@ class SocketManager {
     constructor() {
         this.connectedClients = [];
         this.socket = null;
+        this.io = null;
     }
-    connect(socket) {
+    connect(socket, io) {
         var _a;
         this.socket = socket;
+        this.io = io;
         const authorization = (_a = socket.handshake.query) === null || _a === void 0 ? void 0 : _a.authorization;
         if (authorization) {
             jsonwebtoken_1.default.verify(authorization.toString(), config_1.default.JWT_SECRET, (error, user) => {
@@ -40,11 +42,11 @@ class SocketManager {
             return;
         }
         socketIds.forEach((socketId) => {
-            if (!this.socket) {
-                console.log("socket not initialized");
+            if (!this.io) {
+                console.log("io not initialized");
                 return;
             }
-            this.socket.to(socketId).emit(event, data, (err, success) => {
+            this.io.to(socketId).emit(event, data, (err, success) => {
                 if (err) {
                     console.log(`Event: ${event} was not emitted to ${socketId}`);
                 }

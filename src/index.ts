@@ -37,7 +37,7 @@ const main = async () => {
 
   app.use(routes);
 
-  io.on("connection", (socket) => SocketManager.connect(socket));
+  io.on("connection", (socket) => SocketManager.connect(socket, io));
 
   server.listen(port, () => {
     if (config.NODE_ENV === "development") {
