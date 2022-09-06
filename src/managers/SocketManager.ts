@@ -5,12 +5,12 @@ import config from "../config";
 
 class SocketManager {
   private connectedClients: Array<{ id: string; userId: string }> = [];
-  private socket: Socket<
-    DefaultEventsMap,
-    DefaultEventsMap,
-    DefaultEventsMap,
-    any
-  > | null = null;
+  // private socket: Socket<
+  //   DefaultEventsMap,
+  //   DefaultEventsMap,
+  //   DefaultEventsMap,
+  //   any
+  // > | null = null;
   private io: Server<
     DefaultEventsMap,
     DefaultEventsMap,
@@ -24,7 +24,7 @@ class SocketManager {
     socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
     io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
   ) {
-    this.socket = socket;
+    // this.socket = socket;
     this.io = io;
     const authorization = socket.handshake.query?.authorization;
 

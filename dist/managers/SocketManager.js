@@ -8,12 +8,10 @@ const config_1 = __importDefault(require("../config"));
 class SocketManager {
     constructor() {
         this.connectedClients = [];
-        this.socket = null;
         this.io = null;
     }
     connect(socket, io) {
         var _a;
-        this.socket = socket;
         this.io = io;
         const authorization = (_a = socket.handshake.query) === null || _a === void 0 ? void 0 : _a.authorization;
         if (authorization) {
