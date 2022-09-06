@@ -1,3 +1,4 @@
+import { Roles } from "./../types";
 import { prop, getModelForClass } from "@typegoose/typegoose";
 import { TimeStamps } from "@typegoose/typegoose/lib/defaultClasses";
 
@@ -18,7 +19,10 @@ export class User extends TimeStamps {
   public password!: string;
 
   @prop()
-  public activeAddressId!: string;
+  public activeAddressId: string;
+
+  @prop({ required: true })
+  public role!: Roles;
 
   @prop({ required: true })
   public deviceType!: string;

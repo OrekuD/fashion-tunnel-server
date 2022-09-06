@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
+const types_1 = require("./../types");
 const typegoose_1 = require("@typegoose/typegoose");
 const defaultClasses_1 = require("@typegoose/typegoose/lib/defaultClasses");
 class User extends defaultClasses_1.TimeStamps {
@@ -38,6 +39,10 @@ __decorate([
     (0, typegoose_1.prop)(),
     __metadata("design:type", String)
 ], User.prototype, "activeAddressId", void 0);
+__decorate([
+    (0, typegoose_1.prop)({ required: true }),
+    __metadata("design:type", Number)
+], User.prototype, "role", void 0);
 __decorate([
     (0, typegoose_1.prop)({ required: true }),
     __metadata("design:type", String)

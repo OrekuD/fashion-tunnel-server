@@ -1,4 +1,4 @@
-import { Events, IRequest, RouteHandler } from "../types";
+import { Events, IRequest, Roles, RouteHandler } from "../types";
 import argon2 from "argon2";
 import fs from "fs";
 import { UploadedFile } from "express-fileupload";
@@ -59,6 +59,7 @@ const signup: RouteHandler = async (
       password: hashedPassword,
       deviceType,
       activeAddressId: "",
+      role: Roles.USER,
     });
 
     return res.status(200).json(new AuthResource(user, deviceType).toJSON());

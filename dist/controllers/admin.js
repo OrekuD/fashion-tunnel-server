@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const argon2_1 = __importDefault(require("argon2"));
 const DetailedUserResource_1 = __importDefault(require("../resources/DetailedUserResource"));
 const User_1 = __importDefault(require("../models/User"));
 const types_1 = require("./../types");
@@ -25,6 +26,8 @@ const DetailedProductResource_1 = __importDefault(require("../resources/Detailed
 const SocketManager_1 = __importDefault(require("../managers/SocketManager"));
 const OrderStatusResource_1 = __importDefault(require("../resources/OrderStatusResource"));
 const IncomeResource_1 = __importDefault(require("../resources/IncomeResource"));
+const validateEmail_1 = __importDefault(require("../validation/validateEmail"));
+const AuthResource_1 = __importDefault(require("../resources/AuthResource"));
 const getAllUsers = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
     const users = yield User_1.default.find().sort({
         createdAt: -1,
@@ -159,6 +162,36 @@ const updateOrderStatus = (req, res) => __awaiter(void 0, void 0, void 0, functi
         .status(200)
         .json(new OrderStatusResource_1.default(order.id, req.body.status, timeStamp).toJSON());
 });
+const signin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const email = req.body.email.trim().toLowerCase();
+    const password = req.body.password.trim();
+    const deviceType = req.body.deviceType;
+    if (!(0, validateEmail_1.default)(email)) {
+        return res
+            .status(400)
+            .json(new ErrorResource_1.default("Email is invalid", 400).toJSON());
+    }
+    const user = yield User_1.default.findOne({ email, role: types_1.Roles.SUPER_ADMIN });
+    if (!user) {
+        return res
+            .status(404)
+            .json(new ErrorResource_1.default("User not found", 404).toJSON());
+    }
+    try {
+        const isPasswordValid = yield argon2_1.default.verify(user.password, password);
+        if (!isPasswordValid) {
+            return res
+                .status(400)
+                .json(new ErrorResource_1.default("Password is invalid", 400));
+        }
+        return res.status(200).json(new AuthResource_1.default(user, deviceType).toJSON());
+    }
+    catch (_a) {
+        return res
+            .status(500)
+            .json(new ErrorResource_1.default("Login unsuccessful", 500).toJSON());
+    }
+});
 const AdminController = {
     getAllUsers,
     deleteUser,
@@ -170,6 +203,7 @@ const AdminController = {
     getProduct,
     getAllProducts,
     updateOrderStatus,
+    signin,
 };
 exports.default = AdminController;
 //# sourceMappingURL=admin.js.map

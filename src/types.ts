@@ -29,6 +29,13 @@ export enum ProductCategories {
   JACKET = 5,
 }
 
+export enum Roles {
+  SUPER_ADMIN = 1,
+  ADMIN = 2,
+  USER = 3,
+  BANNED = -100,
+}
+
 export interface OrderStatusTimeStamp {
   status: OrderStatus;
   time: string;

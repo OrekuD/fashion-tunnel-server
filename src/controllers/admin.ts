@@ -1,9 +1,11 @@
+import argon2 from "argon2";
 import DetailedUserResource from "../resources/DetailedUserResource";
 import UserModel from "../models/User";
 import {
   DetailedOrderProduct,
   Events,
   IRequest,
+  Roles,
   RouteHandler,
 } from "./../types";
 import ErrorResource from "../resources/ErrorResource";
@@ -18,6 +20,9 @@ import SocketManager from "../managers/SocketManager";
 import UpdateOrderStatusRequest from "../requests/UpdateOrderStatusRequest";
 import OrderStatusResource from "../resources/OrderStatusResource";
 import IncomeResource from "../resources/IncomeResource";
+import validateEmail from "../validation/validateEmail";
+import SignInRequest from "../requests/SignInRequest";
+import AuthResource from "../resources/AuthResource";
 
 const getAllUsers: RouteHandler = async (_, res) => {
   const users = await UserModel.find().sort({
@@ -191,6 +196,37 @@ const updateOrderStatus: RouteHandler = async (
     );
 };
 
+const signin: RouteHandler = async (req: IRequest<SignInRequest>, res) => {
+  const email = req.body.email.trim().toLowerCase();
+  const password = req.body.password.trim();
+  const deviceType = req.body.deviceType;
+  if (!validateEmail(email)) {
+    return res
+      .status(400)
+      .json(new ErrorResource("Email is invalid", 400).toJSON());
+  }
+  const user = await UserModel.findOne({ email, role: Roles.SUPER_ADMIN });
+  if (!user) {
+    return res
+      .status(404)
+      .json(new ErrorResource("User not found", 404).toJSON());
+  }
+
+  try {
+    const isPasswordValid = await argon2.verify(user.password, password);
+    if (!isPasswordValid) {
+      return res
+        .status(400)
+        .json(new ErrorResource("Password is invalid", 400));
+    }
+    return res.status(200).json(new AuthResource(user, deviceType).toJSON());
+  } catch {
+    return res
+      .status(500)
+      .json(new ErrorResource("Login unsuccessful", 500).toJSON());
+  }
+};
+
 const AdminController = {
   getAllUsers,
   deleteUser,
@@ -202,6 +238,7 @@ const AdminController = {
   getProduct,
   getAllProducts,
   updateOrderStatus,
+  signin,
 };
 
 export default AdminController;

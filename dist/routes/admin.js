@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const admin_1 = __importDefault(require("../controllers/admin"));
 const router = (0, express_1.Router)();
+router.post("/auth/sign-in", admin_1.default.signin);
 router.get("/orders", admin_1.default.getAllOrders);
 router.get("/orders/:orderId", admin_1.default.getOrder);
 router.put("/orders/:orderId/update-status", admin_1.default.updateOrderStatus);

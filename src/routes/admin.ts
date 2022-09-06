@@ -3,6 +3,8 @@ import AdminController from "../controllers/admin";
 
 const router = Router();
 
+router.post("/auth/sign-in", AdminController.signin);
+
 router.get("/orders", AdminController.getAllOrders);
 router.get("/orders/:orderId", AdminController.getOrder);
 router.put("/orders/:orderId/update-status", AdminController.updateOrderStatus);
