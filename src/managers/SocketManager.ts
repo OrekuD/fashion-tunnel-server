@@ -41,7 +41,11 @@ class SocketManager {
           if (error) {
             console.log({ error });
           }
+
+          if (!this.socket) return;
+
           if (user.userId) {
+            this.socket.join(user.userId);
             // const index = this.alreadyConnected(user.userId);
             // if (index < 0) {
             //   this.connectedClients.push({
@@ -56,7 +60,7 @@ class SocketManager {
             //     userId: user.userId,
             //   });
             // }
-            this.joinRoom(user.userId, socket.id);
+            // this.joinRoom(user.userId, socket.id);
             // this.connectedClients.push({
             //   socketId: socket.id,
             //   userId: user.userId,
@@ -79,19 +83,19 @@ class SocketManager {
 
   emitMessage(event: Events, userId: string, data: any) {
     const roomName = this.getRoom(userId);
-    if (!roomName) {
-      console.log("no room assigned");
-      return;
-    }
-    if (!this.socket) {
-      console.log("socket not initialized");
-      return;
-    }
+    // if (!roomName) {
+    //   console.log("no room assigned");
+    //   return;
+    // }
+    // if (!this.socket) {
+    //   console.log("socket not initialized");
+    //   return;
+    // }
     if (!this.io) {
       console.log("io not initialized");
       return;
     }
-    this.io.to(roomName).emit(event, data, (err: any, success: any) => {
+    this.io.to(userId).emit(event, data, (err: any, success: any) => {
       if (err) {
         console.log(`Event: ${event} was not emitted to ${roomName}`);
         console.log(`Event: ${event} was not emitted due to ${err}`);

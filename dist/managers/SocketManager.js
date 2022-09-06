@@ -22,8 +22,10 @@ class SocketManager {
                 if (error) {
                     console.log({ error });
                 }
+                if (!this.socket)
+                    return;
                 if (user.userId) {
-                    this.joinRoom(user.userId, socket.id);
+                    this.socket.join(user.userId);
                     console.info(`Socket ${socket.id} with user id ${user.userId} has connected.`);
                 }
             });
@@ -35,19 +37,11 @@ class SocketManager {
     }
     emitMessage(event, userId, data) {
         const roomName = this.getRoom(userId);
-        if (!roomName) {
-            console.log("no room assigned");
-            return;
-        }
-        if (!this.socket) {
-            console.log("socket not initialized");
-            return;
-        }
         if (!this.io) {
             console.log("io not initialized");
             return;
         }
-        this.io.to(roomName).emit(event, data, (err, success) => {
+        this.io.to(userId).emit(event, data, (err, success) => {
             if (err) {
                 console.log(`Event: ${event} was not emitted to ${roomName}`);
                 console.log(`Event: ${event} was not emitted due to ${err}`);
