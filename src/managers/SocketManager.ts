@@ -4,13 +4,17 @@ import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import config from "../config";
 
 class SocketManager {
-  private connectedClients: Array<{ id: string; userId: string }> = [];
-  // private socket: Socket<
-  //   DefaultEventsMap,
-  //   DefaultEventsMap,
-  //   DefaultEventsMap,
-  //   any
-  // > | null = null;
+  private connectedClients: Array<{ socketId: string; userId: string }> = [];
+  private rooms: Array<{
+    name: string;
+    users: Array<{ userId: string; socketId: string }>;
+  }> = [];
+  private socket: Socket<
+    DefaultEventsMap,
+    DefaultEventsMap,
+    DefaultEventsMap,
+    any
+  > | null = null;
   private io: Server<
     DefaultEventsMap,
     DefaultEventsMap,
@@ -24,7 +28,7 @@ class SocketManager {
     socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>,
     io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
   ) {
-    // this.socket = socket;
+    this.socket = socket;
     this.io = io;
     const authorization = socket.handshake.query?.authorization;
 
@@ -51,10 +55,11 @@ class SocketManager {
             //     userId: user.userId,
             //   });
             // }
-            this.connectedClients.push({
-              id: socket.id,
-              userId: user.userId,
-            });
+            this.joinRoom(user.userId, socket.id);
+            // this.connectedClients.push({
+            //   socketId: socket.id,
+            //   userId: user.userId,
+            // });
             console.info(
               `Socket ${socket.id} with user id ${user.userId} has connected.`
             );
@@ -65,7 +70,7 @@ class SocketManager {
 
     socket.on("disconnect", () => {
       this.connectedClients = this.connectedClients.filter(
-        ({ id }) => id !== socket.id
+        ({ socketId }) => socketId !== socket.id
       );
       console.info(`Socket ${socket.id} has disconnected.`);
     });
@@ -73,20 +78,25 @@ class SocketManager {
 
   emitMessage(event: string, userId: string, data: any) {
     const socketIds = this.getSocketIds(userId);
+    const roomName = this.getRoom(userId);
+    if (!roomName) {
+      console.log("no room assigned");
+      return;
+    }
     if (socketIds.length === 0) {
       console.log("no socket ids found");
       return;
     }
     socketIds.forEach((socketId) => {
-      // if (!this.socket) {
-      //   console.log("socket not initialized");
-      //   return;
-      // }
-      if (!this.io) {
-        console.log("io not initialized");
+      if (!this.socket) {
+        console.log("socket not initialized");
         return;
       }
-      this.io.to(socketId).emit(event, data, (err: any, success: any) => {
+      // if (!this.io) {
+      //   console.log("io not initialized");
+      //   return;
+      // }
+      this.socket.to(roomName).emit(event, data, (err: any, success: any) => {
         if (err) {
           console.log(`Event: ${event} was not emitted to ${socketId}`);
         }
@@ -98,17 +108,42 @@ class SocketManager {
   }
 
   getSocketId(user: string) {
-    return this.connectedClients.find(({ userId }) => userId === user)?.id;
+    return this.connectedClients.find(({ userId }) => userId === user)
+      ?.socketId;
   }
 
   alreadyConnected(user: string) {
     return this.connectedClients.findIndex(({ userId }) => userId === user);
   }
 
+  hasRoom(userId: string) {
+    return this.rooms.findIndex(({ name }) => userId === name);
+  }
+
+  getRoom(userId: string) {
+    return this.rooms.find(({ name }) => userId === name)?.name;
+  }
+
+  joinRoom(userId: string, socketId: string) {
+    const index = this.hasRoom(userId);
+    if (index < 0) {
+      this.rooms.push({
+        name: userId,
+        users: [{ socketId, userId }],
+      });
+    } else {
+      const user = this.rooms[index];
+      this.rooms.splice(index, 1, {
+        name: user.name,
+        users: [...user.users, { socketId, userId }],
+      });
+    }
+  }
+
   getSocketIds(user: string) {
     return this.connectedClients
       .filter(({ userId }) => userId === user)
-      .map(({ id }) => id);
+      .map(({ socketId }) => socketId);
   }
 }
 
