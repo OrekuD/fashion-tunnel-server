@@ -47,9 +47,10 @@ class SocketManager {
             console.log("io not initialized");
             return;
         }
-        this.socket.broadcast.emit(event, data, (err, success) => {
+        this.io.emit(event, data, (err, success) => {
             if (err) {
                 console.log(`Event: ${event} was not emitted to ${roomName}`);
+                console.log(`Event: ${event} was not emitted due to ${err}`);
             }
             if (success) {
                 console.log(`Event: ${event} was emitted to ${roomName}`);

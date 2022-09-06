@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { Socket, Server } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
+import { Events } from "../types";
 import config from "../config";
 
 class SocketManager {
@@ -76,7 +77,7 @@ class SocketManager {
     });
   }
 
-  emitMessage(event: string, userId: string, data: any) {
+  emitMessage(event: Events, userId: string, data: any) {
     const roomName = this.getRoom(userId);
     if (!roomName) {
       console.log("no room assigned");
@@ -90,9 +91,10 @@ class SocketManager {
       console.log("io not initialized");
       return;
     }
-    this.socket.broadcast.emit(event, data, (err: any, success: any) => {
+    this.io.emit(event, data, (err: any, success: any) => {
       if (err) {
         console.log(`Event: ${event} was not emitted to ${roomName}`);
+        console.log(`Event: ${event} was not emitted due to ${err}`);
       }
       if (success) {
         console.log(`Event: ${event} was emitted to ${roomName}`);
