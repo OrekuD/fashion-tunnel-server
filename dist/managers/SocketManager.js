@@ -7,7 +7,6 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../config"));
 class SocketManager {
     constructor() {
-        this.connectedClients = [];
         this.rooms = [];
         this.socket = null;
         this.io = null;
@@ -26,44 +25,32 @@ class SocketManager {
                     return;
                 if (user.userId) {
                     this.socket.join(user.userId);
+                    this.joinRoom(user.userId, socket.id);
                     console.info(`Socket ${socket.id} with user id ${user.userId} has connected.`);
                 }
             });
         }
         socket.on("disconnect", () => {
-            this.connectedClients = this.connectedClients.filter(({ socketId }) => socketId !== socket.id);
             console.info(`Socket ${socket.id} has disconnected.`);
         });
     }
     emitMessage(event, userId, data) {
-        const roomName = this.getRoom(userId);
         if (!this.io) {
             console.log("io not initialized");
             return;
         }
         this.io.to(userId).emit(event, data, (err, success) => {
             if (err) {
-                console.log(`Event: ${event} was not emitted to ${roomName}`);
+                console.log(`Event: ${event} was not emitted to ${userId}`);
                 console.log(`Event: ${event} was not emitted due to ${err}`);
             }
             if (success) {
-                console.log(`Event: ${event} was emitted to ${roomName}`);
+                console.log(`Event: ${event} was emitted to ${userId}`);
             }
         });
     }
-    getSocketId(user) {
-        var _a;
-        return (_a = this.connectedClients.find(({ userId }) => userId === user)) === null || _a === void 0 ? void 0 : _a.socketId;
-    }
-    alreadyConnected(user) {
-        return this.connectedClients.findIndex(({ userId }) => userId === user);
-    }
     hasRoom(userId) {
         return this.rooms.findIndex(({ name }) => userId === name);
-    }
-    getRoom(userId) {
-        var _a;
-        return (_a = this.rooms.find(({ name }) => userId === name)) === null || _a === void 0 ? void 0 : _a.name;
     }
     joinRoom(userId, socketId) {
         const index = this.hasRoom(userId);
@@ -81,10 +68,14 @@ class SocketManager {
             });
         }
     }
-    getSocketIds(user) {
-        return this.connectedClients
-            .filter(({ userId }) => userId === user)
-            .map(({ socketId }) => socketId);
+    leaveRoom(userId) {
+        const index = this.hasRoom(userId);
+        if (index < 0) {
+            return;
+        }
+        else {
+            this.rooms.splice(index, 1);
+        }
     }
 }
 exports.default = new SocketManager();
