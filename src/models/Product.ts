@@ -18,7 +18,7 @@ export class Product {
   public productQuantity!: number;
 
   @prop({ required: true })
-  public extraInfo!: string;
+  public extraInfo!: Array<string>;
 
   @prop({ required: true })
   public gender!: ProductGender;

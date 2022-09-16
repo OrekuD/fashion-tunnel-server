@@ -32,7 +32,7 @@ __decorate([
 ], Product.prototype, "productQuantity", void 0);
 __decorate([
     (0, typegoose_1.prop)({ required: true }),
-    __metadata("design:type", String)
+    __metadata("design:type", Array)
 ], Product.prototype, "extraInfo", void 0);
 __decorate([
     (0, typegoose_1.prop)({ required: true }),

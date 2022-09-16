@@ -7,7 +7,7 @@ export default class ProductResource {
   private description: string;
   private price: number;
   private productQuantity: number;
-  private extraInfo: string;
+  private extraInfo: Array<string>;
   private gender: ProductGender;
   private productCategory: ProductCategories;
   private sizeType: SizeType;

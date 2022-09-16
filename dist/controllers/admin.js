@@ -28,6 +28,7 @@ const OrderStatusResource_1 = __importDefault(require("../resources/OrderStatusR
 const IncomeResource_1 = __importDefault(require("../resources/IncomeResource"));
 const validateEmail_1 = __importDefault(require("../validation/validateEmail"));
 const AuthResource_1 = __importDefault(require("../resources/AuthResource"));
+const ProductResource_1 = __importDefault(require("../resources/ProductResource"));
 const getAllUsers = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
     const users = yield User_1.default.find().sort({
         createdAt: -1,
@@ -192,6 +193,25 @@ const signin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             .json(new ErrorResource_1.default("Login unsuccessful", 500).toJSON());
     }
 });
+const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const product = yield Product_1.default.create({
+        name: req.body.name,
+        description: req.body.description,
+        price: req.body.price,
+        productQuantity: req.body.productQuantity,
+        extraInfo: req.body.extraInfo,
+        sizeType: req.body.sizeType,
+        productCategory: req.body.productCategory,
+        gender: req.body.gender,
+        images: req.body.images,
+    });
+    if (!product) {
+        return res
+            .status(500)
+            .json(new ErrorResource_1.default("There was an issue creating your product", 500).toJSON());
+    }
+    return res.status(200).json(new ProductResource_1.default(product).toJSON());
+});
 const AdminController = {
     getAllUsers,
     deleteUser,
@@ -204,6 +224,7 @@ const AdminController = {
     getAllProducts,
     updateOrderStatus,
     signin,
+    createProduct,
 };
 exports.default = AdminController;
 //# sourceMappingURL=admin.js.map

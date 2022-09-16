@@ -1,5 +1,5 @@
 import argon2 from "argon2";
-import { DeviceTypes, Roles } from "./../types";
+import { DeviceTypes, Roles } from "../types";
 import UserModel from "../models/User";
 
 const adminSeeder = async () => {

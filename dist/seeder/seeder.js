@@ -12,11 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const products_1 = __importDefault(require("./products"));
-const admin_1 = __importDefault(require("./admin"));
+const productsSeeder_1 = __importDefault(require("./productsSeeder"));
+const adminSeeder_1 = __importDefault(require("./adminSeeder"));
 const seeder = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, products_1.default)();
-    yield (0, admin_1.default)();
+    yield (0, productsSeeder_1.default)();
+    yield (0, adminSeeder_1.default)();
 });
 exports.default = seeder;
 //# sourceMappingURL=seeder.js.map

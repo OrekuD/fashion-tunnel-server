@@ -51,12 +51,11 @@ const productsSeeder = async () => {
       const sizeType = image.includes("shoes") ? "shoe" : "cloth";
 
       testProducts.push({
-        // id: new mongoose.Types.ObjectId().toString(),
         name: getProductName(image),
         description: faker.commerce.productDescription(),
         price: Number(Number(faker.commerce.price(12, 400, 2)).toFixed(2)),
         productQuantity: generateRandomQuantity(),
-        extraInfo: faker.commerce.productDescription(),
+        extraInfo: [faker.commerce.productDescription()],
         sizeType,
         productCategory: getProductCategory(image),
         gender: ProductGender.UNISEX,

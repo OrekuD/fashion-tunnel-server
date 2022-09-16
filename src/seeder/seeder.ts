@@ -1,5 +1,5 @@
-import productsSeeder from "./products";
-import adminSeeder from "./admin";
+import productsSeeder from "./productsSeeder";
+import adminSeeder from "./adminSeeder";
 
 const seeder = async () => {
   await productsSeeder();

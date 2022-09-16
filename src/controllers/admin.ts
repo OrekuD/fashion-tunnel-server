@@ -23,6 +23,8 @@ import IncomeResource from "../resources/IncomeResource";
 import validateEmail from "../validation/validateEmail";
 import SignInRequest from "../requests/SignInRequest";
 import AuthResource from "../resources/AuthResource";
+import CreateProductRequest from "../requests/CreateProductRequest";
+import ProductResource from "../resources/ProductResource";
 
 const getAllUsers: RouteHandler = async (_, res) => {
   const users = await UserModel.find().sort({
@@ -227,6 +229,36 @@ const signin: RouteHandler = async (req: IRequest<SignInRequest>, res) => {
   }
 };
 
+const createProduct: RouteHandler = async (
+  req: IRequest<CreateProductRequest>,
+  res
+) => {
+  const product = await ProductModel.create({
+    name: req.body.name,
+    description: req.body.description,
+    price: req.body.price,
+    productQuantity: req.body.productQuantity,
+    extraInfo: req.body.extraInfo,
+    sizeType: req.body.sizeType,
+    productCategory: req.body.productCategory,
+    gender: req.body.gender,
+    images: req.body.images,
+  });
+
+  if (!product) {
+    return res
+      .status(500)
+      .json(
+        new ErrorResource(
+          "There was an issue creating your product",
+          500
+        ).toJSON()
+      );
+  }
+
+  return res.status(200).json(new ProductResource(product).toJSON());
+};
+
 const AdminController = {
   getAllUsers,
   deleteUser,
@@ -239,6 +271,7 @@ const AdminController = {
   getAllProducts,
   updateOrderStatus,
   signin,
+  createProduct,
 };
 
 export default AdminController;

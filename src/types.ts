@@ -106,7 +106,7 @@ export interface DetailedOrderProduct {
   total: number;
   name: string;
   description: string;
-  extraInfo: string;
+  extraInfo: Array<string>;
   gender: ProductGender;
   productQuantity: number;
   images: Array<string>;
