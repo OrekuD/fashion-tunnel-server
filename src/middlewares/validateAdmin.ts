@@ -1,10 +1,11 @@
 import jwt from "jsonwebtoken";
 import { Response } from "express";
 import config from "../config";
-import { IRequest } from "../types";
+import { IRequest, Roles } from "../types";
+import UserModel from "../models/User";
 import ErrorResource from "../resources/ErrorResource";
 
-export const validateUser = (
+export const validateAdmin = (
   req: IRequest<any>,
   res: Response,
   next: () => void
@@ -18,9 +19,16 @@ export const validateUser = (
   return jwt.verify(
     token,
     config.JWT_SECRET as string,
-    (err: any, user: any) => {
+    async (err: any, user: any) => {
       if (err) {
         console.log(err);
+        return res.status(403).json(new ErrorResource("Unauthorized", 403));
+      }
+      const admin = await UserModel.findOne({
+        _id: user.userId,
+        role: Roles.SUPER_ADMIN,
+      });
+      if (!admin) {
         return res.status(403).json(new ErrorResource("Unauthorized", 403));
       }
       req.userId = user.userId;
