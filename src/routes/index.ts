@@ -15,6 +15,6 @@ router.use("/products", ProductsRoutes);
 router.use("/favourites", FavouritesRoutes);
 router.use("/admin", AdminRoutes);
 router.use("/orders", OrdersRoutes);
-router.use("/images", ImagesRoutes);
+router.use("/upload/images", ImagesRoutes);
 
 export default router;

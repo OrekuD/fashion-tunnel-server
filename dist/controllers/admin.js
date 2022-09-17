@@ -111,7 +111,9 @@ const getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     return res.status(200).json(new DetailedUserResource_1.default(user).toJSON());
 });
 const getAllProducts = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const data = yield Product_1.default.find();
+    const data = yield Product_1.default.find().sort({
+        createdAt: -1,
+    });
     return res
         .status(200)
         .json(data.map((product) => new DetailedProductResource_1.default(product).toJSON()));

@@ -16,7 +16,9 @@ const ErrorResource_1 = __importDefault(require("../resources/ErrorResource"));
 const Product_1 = __importDefault(require("../models/Product"));
 const ProductResource_1 = __importDefault(require("../resources/ProductResource"));
 const getProducts = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const data = yield Product_1.default.find();
+    const data = yield Product_1.default.find().sort({
+        createdAt: -1,
+    });
     return res
         .status(200)
         .json(data.map((product) => new ProductResource_1.default(product).toJSON()));

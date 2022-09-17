@@ -21,6 +21,7 @@ router.get("/users/:userId", validateAdmin, AdminController.getUser);
 router.delete("/users/:userId", validateAdmin, AdminController.deleteUser);
 
 router.get("/products", validateAdmin, AdminController.getAllProducts);
+router.post("/products", validateAdmin, AdminController.createProduct);
 router.get("/products/:productId", validateAdmin, AdminController.getProduct);
 router.delete(
   "/products/:productId",

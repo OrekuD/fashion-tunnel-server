@@ -5,7 +5,9 @@ import { Response } from "express";
 import ProductResource from "../resources/ProductResource";
 
 const getProducts: RouteHandler = async (_, res: Response) => {
-  const data = await ProductModel.find();
+  const data = await ProductModel.find().sort({
+    createdAt: -1,
+  });
   // add some sort of pagination
   return res
     .status(200)

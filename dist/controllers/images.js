@@ -27,7 +27,6 @@ const uploadImages = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             yield new Promise((resolve) => {
                 file.mv(`${__dirname}/${file.name}`, (error) => __awaiter(void 0, void 0, void 0, function* () {
                     if (error) {
-                        console.log({ error });
                         return res
                             .status(500)
                             .send({ message: "File upload unsuccessful" });

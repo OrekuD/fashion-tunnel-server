@@ -121,7 +121,9 @@ const getUser: RouteHandler = async (req, res) => {
 };
 
 const getAllProducts: RouteHandler = async (_, res) => {
-  const data = await ProductModel.find();
+  const data = await ProductModel.find().sort({
+    createdAt: -1,
+  });
   // add some sort of pagination
   return res
     .status(200)

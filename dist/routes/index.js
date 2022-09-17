@@ -18,6 +18,6 @@ router.use("/products", products_1.default);
 router.use("/favourites", favourites_1.default);
 router.use("/admin", admin_1.default);
 router.use("/orders", orders_1.default);
-router.use("/images", images_1.default);
+router.use("/upload/images", images_1.default);
 exports.default = router;
 //# sourceMappingURL=index.js.map

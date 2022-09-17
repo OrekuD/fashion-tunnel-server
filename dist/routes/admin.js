@@ -16,6 +16,7 @@ router.get("/users", validateAdmin_1.validateAdmin, admin_1.default.getAllUsers)
 router.get("/users/:userId", validateAdmin_1.validateAdmin, admin_1.default.getUser);
 router.delete("/users/:userId", validateAdmin_1.validateAdmin, admin_1.default.deleteUser);
 router.get("/products", validateAdmin_1.validateAdmin, admin_1.default.getAllProducts);
+router.post("/products", validateAdmin_1.validateAdmin, admin_1.default.createProduct);
 router.get("/products/:productId", validateAdmin_1.validateAdmin, admin_1.default.getProduct);
 router.delete("/products/:productId", validateAdmin_1.validateAdmin, admin_1.default.deleteProduct);
 exports.default = router;
