@@ -27,9 +27,6 @@ const uploadImages = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             yield new Promise((resolve) => {
                 file.mv(`${__dirname}/${file.name}`, (error) => __awaiter(void 0, void 0, void 0, function* () {
                     if (error) {
-                        return res
-                            .status(500)
-                            .send({ message: "File upload unsuccessful" });
                     }
                     const { url } = yield (0, uploadFile_1.uploadFile)(path_1.default.join(__dirname, file.name), {
                         access_mode: "public",

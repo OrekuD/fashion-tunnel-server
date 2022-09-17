@@ -18,9 +18,9 @@ const uploadImages: RouteHandler = async (req: IRequest<any>, res) => {
         file.mv(`${__dirname}/${file.name}`, async (error) => {
           if (error) {
             // console.log({ error });
-            return res
-              .status(500)
-              .send({ message: "File upload unsuccessful" });
+            // return res
+            //   .status(500)
+            //   .send({ message: "File upload unsuccessful" });
           }
 
           const { url } = await uploadFile(path.join(__dirname, file.name), {
