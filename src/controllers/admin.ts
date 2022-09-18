@@ -37,19 +37,8 @@ const getAllUsers: RouteHandler = async (req, res) => {
   const users = await UserModel.find({ role: Roles.USER }).sort({
     createdAt: -1,
   });
+  const hasNextPage = users.slice(end).length > 0;
   const list = users.slice(start, end);
-  const hasNextPage = users.slice(start + 1).length > 0;
-  // console.table({
-  //   currentPage: page,
-  //   nextPage: hasNextPage ? page + 1 : page,
-  //   pageSize: size,
-  //   totalPages: Math.ceil(users.length / size),
-  // }); // 300 / 20
-
-  // console.table({
-  //   start,
-  //   end,
-  // });
 
   return res.status(200).json(
     new PaginatedResource(
@@ -62,9 +51,6 @@ const getAllUsers: RouteHandler = async (req, res) => {
       list.map((user) => new DetailedUserResource(user).toJSON())
     )
   );
-  // return res
-  //   .status(200)
-  //   .json(list.map((user) => new DetailedUserResource(user).toJSON()));
 };
 
 const getSummary: RouteHandler = async (_, res) => {
@@ -76,17 +62,34 @@ const getSummary: RouteHandler = async (_, res) => {
     .json(new SummaryResource(income, users.length, orders.length).toJSON());
 };
 
-const getAllOrders: RouteHandler = async (_, res) => {
+const getAllOrders: RouteHandler = async (req, res) => {
+  const page = req.query.page ? toNumber(req.query.page as string) : 0;
+  const size = req.query.size ? toNumber(req.query.size as string) : 0;
+  const start = (page - 1) * size;
+  const end = (page - 1) * size + size;
   const orders = await OrderModel.find().sort({
     createdAt: -1,
   });
+  const hasNextPage = orders.slice(end).length > 0;
+  const list = orders.slice(start, end);
 
   const response: Array<any> = [];
-  for (const order of orders) {
+  for (const order of list) {
     const user = await UserModel.findById(order.userId);
     response.push(new SimpleOrderResource(order, user!).toJSON());
   }
-  return res.status(200).json(response);
+
+  return res.status(200).json(
+    new PaginatedResource(
+      {
+        currentPage: page,
+        nextPage: hasNextPage ? page + 1 : page,
+        pageSize: size,
+        totalPages: Math.ceil(response.length / size),
+      },
+      response
+    )
+  );
 };
 
 const getOrder: RouteHandler = async (req: IRequest<any>, res) => {
@@ -150,14 +153,28 @@ const getUser: RouteHandler = async (req, res) => {
   return res.status(200).json(new DetailedUserResource(user).toJSON());
 };
 
-const getAllProducts: RouteHandler = async (_, res) => {
-  const data = await ProductModel.find().sort({
+const getAllProducts: RouteHandler = async (req, res) => {
+  const page = req.query.page ? toNumber(req.query.page as string) : 0;
+  const size = req.query.size ? toNumber(req.query.size as string) : 0;
+  const start = (page - 1) * size;
+  const end = (page - 1) * size + size;
+  const products = await ProductModel.find().sort({
     createdAt: -1,
   });
-  // add some sort of pagination
-  return res
-    .status(200)
-    .json(data.map((product) => new DetailedProductResource(product).toJSON()));
+  const hasNextPage = products.slice(end).length > 0;
+  const list = products.slice(start, end);
+
+  return res.status(200).json(
+    new PaginatedResource(
+      {
+        currentPage: page,
+        nextPage: hasNextPage ? page + 1 : page,
+        pageSize: size,
+        totalPages: Math.ceil(products.length / size),
+      },
+      list.map((product) => new DetailedProductResource(product).toJSON())
+    )
+  );
 };
 
 const getProduct: RouteHandler = async (req: IRequest<any>, res) => {

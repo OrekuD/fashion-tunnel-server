@@ -39,8 +39,8 @@ const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     const users = yield User_1.default.find({ role: types_1.Roles.USER }).sort({
         createdAt: -1,
     });
+    const hasNextPage = users.slice(end).length > 0;
     const list = users.slice(start, end);
-    const hasNextPage = users.slice(start + 1).length > 0;
     return res.status(200).json(new PaginatedResource_1.default({
         currentPage: page,
         nextPage: hasNextPage ? page + 1 : page,
@@ -56,16 +56,27 @@ const getSummary = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
         .status(200)
         .json(new SummaryResource_1.default(income, users.length, orders.length).toJSON());
 });
-const getAllOrders = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getAllOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const page = req.query.page ? (0, toNumber_1.default)(req.query.page) : 0;
+    const size = req.query.size ? (0, toNumber_1.default)(req.query.size) : 0;
+    const start = (page - 1) * size;
+    const end = (page - 1) * size + size;
     const orders = yield Order_1.default.find().sort({
         createdAt: -1,
     });
+    const hasNextPage = orders.slice(end).length > 0;
+    const list = orders.slice(start, end);
     const response = [];
-    for (const order of orders) {
+    for (const order of list) {
         const user = yield User_1.default.findById(order.userId);
         response.push(new SimpleOrderResource_1.default(order, user).toJSON());
     }
-    return res.status(200).json(response);
+    return res.status(200).json(new PaginatedResource_1.default({
+        currentPage: page,
+        nextPage: hasNextPage ? page + 1 : page,
+        pageSize: size,
+        totalPages: Math.ceil(response.length / size),
+    }, response));
 });
 const getOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const order = yield Order_1.default.findById(req.params.orderId);
@@ -123,13 +134,22 @@ const getUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     return res.status(200).json(new DetailedUserResource_1.default(user).toJSON());
 });
-const getAllProducts = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const data = yield Product_1.default.find().sort({
+const getAllProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const page = req.query.page ? (0, toNumber_1.default)(req.query.page) : 0;
+    const size = req.query.size ? (0, toNumber_1.default)(req.query.size) : 0;
+    const start = (page - 1) * size;
+    const end = (page - 1) * size + size;
+    const products = yield Product_1.default.find().sort({
         createdAt: -1,
     });
-    return res
-        .status(200)
-        .json(data.map((product) => new DetailedProductResource_1.default(product).toJSON()));
+    const hasNextPage = products.slice(end).length > 0;
+    const list = products.slice(start, end);
+    return res.status(200).json(new PaginatedResource_1.default({
+        currentPage: page,
+        nextPage: hasNextPage ? page + 1 : page,
+        pageSize: size,
+        totalPages: Math.ceil(products.length / size),
+    }, list.map((product) => new DetailedProductResource_1.default(product).toJSON())));
 });
 const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const product = yield Product_1.default.findById(req.params.productId);
