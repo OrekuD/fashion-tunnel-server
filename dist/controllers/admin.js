@@ -25,10 +25,10 @@ const DetailedOrderResource_1 = __importDefault(require("../resources/DetailedOr
 const DetailedProductResource_1 = __importDefault(require("../resources/DetailedProductResource"));
 const SocketManager_1 = __importDefault(require("../managers/SocketManager"));
 const OrderStatusResource_1 = __importDefault(require("../resources/OrderStatusResource"));
-const IncomeResource_1 = __importDefault(require("../resources/IncomeResource"));
 const validateEmail_1 = __importDefault(require("../validation/validateEmail"));
 const AuthResource_1 = __importDefault(require("../resources/AuthResource"));
 const ProductResource_1 = __importDefault(require("../resources/ProductResource"));
+const SummaryResource_1 = __importDefault(require("../resources/SummaryResource"));
 const getAllUsers = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
     const users = yield User_1.default.find().sort({
         createdAt: -1,
@@ -37,11 +37,13 @@ const getAllUsers = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
         .status(200)
         .json(users.map((user) => new DetailedUserResource_1.default(user).toJSON()));
 });
-const getIncome = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getSummary = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
     const orders = yield Order_1.default.find();
+    const users = yield User_1.default.find({ role: types_1.Roles.USER });
+    const income = orders.reduce((sum, order) => sum + order.total, 0);
     return res
         .status(200)
-        .json(new IncomeResource_1.default(orders.reduce((sum, order) => sum + order.total, 0)).toJSON());
+        .json(new SummaryResource_1.default(income, users.length, orders.length).toJSON());
 });
 const getAllOrders = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
     const orders = yield Order_1.default.find().sort({
@@ -214,12 +216,36 @@ const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
     return res.status(200).json(new ProductResource_1.default(product).toJSON());
 });
+const updateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const product = yield Product_1.default.findById(req.params.productId);
+    if (!product) {
+        return res
+            .status(404)
+            .json(new ErrorResource_1.default("Product not found", 404).toJSON());
+    }
+    const updatedProduct = yield Product_1.default.findByIdAndUpdate(product.id, {
+        name: req.body.name,
+        description: req.body.description,
+        price: req.body.price,
+        productQuantity: req.body.productQuantity,
+        extraInfo: req.body.extraInfo,
+        sizeType: req.body.sizeType,
+        productCategory: req.body.productCategory,
+        gender: req.body.gender,
+    });
+    if (!updatedProduct) {
+        return res
+            .status(500)
+            .json(new ErrorResource_1.default("There was an issue updating your product", 500).toJSON());
+    }
+    return res.status(200).json(new ProductResource_1.default(updatedProduct).toJSON());
+});
 const AdminController = {
     getAllUsers,
     deleteUser,
     deleteProduct,
     getAllOrders,
-    getIncome,
+    getSummary,
     getOrder,
     getUser,
     getProduct,
@@ -227,6 +253,7 @@ const AdminController = {
     updateOrderStatus,
     signin,
     createProduct,
+    updateProduct,
 };
 exports.default = AdminController;
 //# sourceMappingURL=admin.js.map

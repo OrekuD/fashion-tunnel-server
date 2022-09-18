@@ -11,7 +11,7 @@ router.post("/auth/sign-in", admin_1.default.signin);
 router.get("/orders", validateAdmin_1.validateAdmin, admin_1.default.getAllOrders);
 router.get("/orders/:orderId", validateAdmin_1.validateAdmin, admin_1.default.getOrder);
 router.put("/orders/:orderId/update-status", validateAdmin_1.validateAdmin, admin_1.default.updateOrderStatus);
-router.get("/income", validateAdmin_1.validateAdmin, admin_1.default.getIncome);
+router.get("/summary", validateAdmin_1.validateAdmin, admin_1.default.getSummary);
 router.get("/users", validateAdmin_1.validateAdmin, admin_1.default.getAllUsers);
 router.get("/users/:userId", validateAdmin_1.validateAdmin, admin_1.default.getUser);
 router.delete("/users/:userId", validateAdmin_1.validateAdmin, admin_1.default.deleteUser);
@@ -19,5 +19,6 @@ router.get("/products", validateAdmin_1.validateAdmin, admin_1.default.getAllPro
 router.post("/products", validateAdmin_1.validateAdmin, admin_1.default.createProduct);
 router.get("/products/:productId", validateAdmin_1.validateAdmin, admin_1.default.getProduct);
 router.delete("/products/:productId", validateAdmin_1.validateAdmin, admin_1.default.deleteProduct);
+router.put("/products/:productId", validateAdmin_1.validateAdmin, admin_1.default.updateProduct);
 exports.default = router;
 //# sourceMappingURL=admin.js.map

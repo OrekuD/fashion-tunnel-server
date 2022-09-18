@@ -14,7 +14,7 @@ router.put(
   AdminController.updateOrderStatus
 );
 
-router.get("/income", validateAdmin, AdminController.getIncome);
+router.get("/summary", validateAdmin, AdminController.getSummary);
 
 router.get("/users", validateAdmin, AdminController.getAllUsers);
 router.get("/users/:userId", validateAdmin, AdminController.getUser);
@@ -27,6 +27,11 @@ router.delete(
   "/products/:productId",
   validateAdmin,
   AdminController.deleteProduct
+);
+router.put(
+  "/products/:productId",
+  validateAdmin,
+  AdminController.updateProduct
 );
 
 export default router;

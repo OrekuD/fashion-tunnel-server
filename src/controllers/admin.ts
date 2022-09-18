@@ -19,12 +19,13 @@ import DetailedProductResource from "../resources/DetailedProductResource";
 import SocketManager from "../managers/SocketManager";
 import UpdateOrderStatusRequest from "../requests/UpdateOrderStatusRequest";
 import OrderStatusResource from "../resources/OrderStatusResource";
-import IncomeResource from "../resources/IncomeResource";
 import validateEmail from "../validation/validateEmail";
 import SignInRequest from "../requests/SignInRequest";
 import AuthResource from "../resources/AuthResource";
 import CreateProductRequest from "../requests/CreateProductRequest";
 import ProductResource from "../resources/ProductResource";
+import UpdateProductRequest from "../requests/UpdateProductRequest";
+import SummaryResource from "../resources/SummaryResource";
 
 const getAllUsers: RouteHandler = async (_, res) => {
   const users = await UserModel.find().sort({
@@ -35,15 +36,13 @@ const getAllUsers: RouteHandler = async (_, res) => {
     .json(users.map((user) => new DetailedUserResource(user).toJSON()));
 };
 
-const getIncome: RouteHandler = async (_, res) => {
+const getSummary: RouteHandler = async (_, res) => {
   const orders = await OrderModel.find();
+  const users = await UserModel.find({ role: Roles.USER });
+  const income = orders.reduce((sum, order) => sum + order.total, 0);
   return res
     .status(200)
-    .json(
-      new IncomeResource(
-        orders.reduce((sum, order) => sum + order.total, 0)
-      ).toJSON()
-    );
+    .json(new SummaryResource(income, users.length, orders.length).toJSON());
 };
 
 const getAllOrders: RouteHandler = async (_, res) => {
@@ -261,12 +260,49 @@ const createProduct: RouteHandler = async (
   return res.status(200).json(new ProductResource(product).toJSON());
 };
 
+const updateProduct: RouteHandler = async (
+  req: IRequest<UpdateProductRequest>,
+  res
+) => {
+  const product = await ProductModel.findById(req.params.productId);
+  if (!product) {
+    return res
+      .status(404)
+      .json(new ErrorResource("Product not found", 404).toJSON());
+  }
+
+  const updatedProduct = await ProductModel.findByIdAndUpdate(product.id, {
+    name: req.body.name,
+    description: req.body.description,
+    price: req.body.price,
+    productQuantity: req.body.productQuantity,
+    extraInfo: req.body.extraInfo,
+    sizeType: req.body.sizeType,
+    productCategory: req.body.productCategory,
+    gender: req.body.gender,
+    // images: req.body.images,
+  });
+
+  if (!updatedProduct) {
+    return res
+      .status(500)
+      .json(
+        new ErrorResource(
+          "There was an issue updating your product",
+          500
+        ).toJSON()
+      );
+  }
+
+  return res.status(200).json(new ProductResource(updatedProduct).toJSON());
+};
+
 const AdminController = {
   getAllUsers,
   deleteUser,
   deleteProduct,
   getAllOrders,
-  getIncome,
+  getSummary,
   getOrder,
   getUser,
   getProduct,
@@ -274,6 +310,7 @@ const AdminController = {
   updateOrderStatus,
   signin,
   createProduct,
+  updateProduct,
 };
 
 export default AdminController;
