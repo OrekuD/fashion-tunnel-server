@@ -17,6 +17,7 @@ const types_1 = require("../types");
 const User_1 = __importDefault(require("../models/User"));
 const faker_1 = require("@faker-js/faker");
 const usersSeeder = () => __awaiter(void 0, void 0, void 0, function* () {
+    return;
     console.info("⚡️ Users seeding started");
     const hashedPassword = yield argon2_1.default.hash("secret");
     for (let i = 0; i < 1000; i++) {

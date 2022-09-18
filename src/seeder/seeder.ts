@@ -5,7 +5,7 @@ import usersSeeder from "./usersSeeder";
 const seeder = async () => {
   await productsSeeder();
   await adminSeeder();
-  // await usersSeeder();
+  await usersSeeder();
 };
 
 export default seeder;

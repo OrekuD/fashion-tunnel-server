@@ -11,6 +11,8 @@ const usersSeeder = async () => {
   //   return;
   // }
 
+  return;
+
   console.info("⚡️ Users seeding started");
 
   const hashedPassword = await argon2.hash("secret");
