@@ -29,13 +29,24 @@ const validateEmail_1 = __importDefault(require("../validation/validateEmail"));
 const AuthResource_1 = __importDefault(require("../resources/AuthResource"));
 const ProductResource_1 = __importDefault(require("../resources/ProductResource"));
 const SummaryResource_1 = __importDefault(require("../resources/SummaryResource"));
-const getAllUsers = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const users = yield User_1.default.find().sort({
+const toNumber_1 = __importDefault(require("../utils/toNumber"));
+const PaginatedResource_1 = __importDefault(require("../resources/PaginatedResource"));
+const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const page = req.query.page ? (0, toNumber_1.default)(req.query.page) : 0;
+    const size = req.query.size ? (0, toNumber_1.default)(req.query.size) : 0;
+    const start = (page - 1) * size;
+    const end = (page - 1) * size + size;
+    const users = yield User_1.default.find({ role: types_1.Roles.USER }).sort({
         createdAt: -1,
     });
-    return res
-        .status(200)
-        .json(users.map((user) => new DetailedUserResource_1.default(user).toJSON()));
+    const list = users.slice(start, end);
+    const hasNextPage = users.slice(start + 1).length > 0;
+    return res.status(200).json(new PaginatedResource_1.default({
+        currentPage: page,
+        nextPage: hasNextPage ? page + 1 : page,
+        pageSize: size,
+        totalPages: Math.ceil(users.length / size),
+    }, list.map((user) => new DetailedUserResource_1.default(user).toJSON())));
 });
 const getSummary = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
     const orders = yield Order_1.default.find();

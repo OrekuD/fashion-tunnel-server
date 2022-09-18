@@ -99,6 +99,13 @@ export interface Address {
   postalCode: string;
 }
 
+export interface PaginatedMeta {
+  totalPages: number;
+  currentPage: number;
+  nextPage: number;
+  pageSize: number;
+}
+
 export interface DetailedOrderProduct {
   id: string;
   price: number;

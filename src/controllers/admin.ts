@@ -26,14 +26,45 @@ import CreateProductRequest from "../requests/CreateProductRequest";
 import ProductResource from "../resources/ProductResource";
 import UpdateProductRequest from "../requests/UpdateProductRequest";
 import SummaryResource from "../resources/SummaryResource";
+import toNumber from "../utils/toNumber";
+import PaginatedResource from "../resources/PaginatedResource";
 
-const getAllUsers: RouteHandler = async (_, res) => {
-  const users = await UserModel.find().sort({
+const getAllUsers: RouteHandler = async (req, res) => {
+  const page = req.query.page ? toNumber(req.query.page as string) : 0;
+  const size = req.query.size ? toNumber(req.query.size as string) : 0;
+  const start = (page - 1) * size;
+  const end = (page - 1) * size + size;
+  const users = await UserModel.find({ role: Roles.USER }).sort({
     createdAt: -1,
   });
-  return res
-    .status(200)
-    .json(users.map((user) => new DetailedUserResource(user).toJSON()));
+  const list = users.slice(start, end);
+  const hasNextPage = users.slice(start + 1).length > 0;
+  // console.table({
+  //   currentPage: page,
+  //   nextPage: hasNextPage ? page + 1 : page,
+  //   pageSize: size,
+  //   totalPages: Math.ceil(users.length / size),
+  // }); // 300 / 20
+
+  // console.table({
+  //   start,
+  //   end,
+  // });
+
+  return res.status(200).json(
+    new PaginatedResource(
+      {
+        currentPage: page,
+        nextPage: hasNextPage ? page + 1 : page,
+        pageSize: size,
+        totalPages: Math.ceil(users.length / size),
+      },
+      list.map((user) => new DetailedUserResource(user).toJSON())
+    )
+  );
+  // return res
+  //   .status(200)
+  //   .json(list.map((user) => new DetailedUserResource(user).toJSON()));
 };
 
 const getSummary: RouteHandler = async (_, res) => {
