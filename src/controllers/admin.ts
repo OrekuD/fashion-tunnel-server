@@ -28,6 +28,8 @@ import UpdateProductRequest from "../requests/UpdateProductRequest";
 import SummaryResource from "../resources/SummaryResource";
 import toNumber from "../utils/toNumber";
 import PaginatedResource from "../resources/PaginatedResource";
+import UserAddressModel from "../models/UserAddress";
+import UserAddressResource from "../resources/UserAddressResource";
 
 const getAllUsers: RouteHandler = async (req, res) => {
   const page = req.query.page ? toNumber(req.query.page as string) : 0;
@@ -107,6 +109,8 @@ const getOrder: RouteHandler = async (req: IRequest<any>, res) => {
   }
   const orderProducts: Array<DetailedOrderProduct> = [];
 
+  const userAddress = await UserAddressModel.findById(order.userAddressId);
+
   for (const orderProduct of order.products) {
     const product = await ProductModel.findById(orderProduct.id);
     if (product) {
@@ -129,7 +133,14 @@ const getOrder: RouteHandler = async (req: IRequest<any>, res) => {
 
   return res
     .status(200)
-    .json(new DetailedOrderResource(order, user, orderProducts).toJSON());
+    .json(
+      new DetailedOrderResource(
+        order,
+        user,
+        orderProducts,
+        userAddress ? new UserAddressResource(userAddress).toJSON() : null
+      ).toJSON()
+    );
 };
 
 const deleteUser: RouteHandler = async (req, res) => {

@@ -31,6 +31,8 @@ const ProductResource_1 = __importDefault(require("../resources/ProductResource"
 const SummaryResource_1 = __importDefault(require("../resources/SummaryResource"));
 const toNumber_1 = __importDefault(require("../utils/toNumber"));
 const PaginatedResource_1 = __importDefault(require("../resources/PaginatedResource"));
+const UserAddress_1 = __importDefault(require("../models/UserAddress"));
+const UserAddressResource_1 = __importDefault(require("../resources/UserAddressResource"));
 const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const page = req.query.page ? (0, toNumber_1.default)(req.query.page) : 0;
     const size = req.query.size ? (0, toNumber_1.default)(req.query.size) : 0;
@@ -92,6 +94,7 @@ const getOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             .json(new ErrorResource_1.default("User not found", 404).toJSON());
     }
     const orderProducts = [];
+    const userAddress = yield UserAddress_1.default.findById(order.userAddressId);
     for (const orderProduct of order.products) {
         const product = yield Product_1.default.findById(orderProduct.id);
         if (product) {
@@ -113,7 +116,7 @@ const getOrder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     return res
         .status(200)
-        .json(new DetailedOrderResource_1.default(order, user, orderProducts).toJSON());
+        .json(new DetailedOrderResource_1.default(order, user, orderProducts, userAddress ? new UserAddressResource_1.default(userAddress).toJSON() : null).toJSON());
 });
 const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield User_1.default.findById(req.params.userId);

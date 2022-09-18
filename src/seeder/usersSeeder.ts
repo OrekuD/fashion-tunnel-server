@@ -23,7 +23,7 @@ const usersSeeder = async () => {
     await UserModel.create({
       firstname: firstname,
       lastname: lastname,
-      email: faker.internet.email(firstname, lastname),
+      email: faker.internet.email(firstname, lastname).toLowerCase(),
       password: hashedPassword,
       deviceType:
         i % 3 === 0

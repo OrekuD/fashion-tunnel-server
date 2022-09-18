@@ -5,6 +5,7 @@ import {
   IRequest,
   OrderProduct,
   OrderStatus,
+  Roles,
   RouteHandler,
 } from "../types";
 import ErrorResource from "../resources/ErrorResource";
@@ -16,6 +17,7 @@ import CreateOrderRequest from "../requests/CreateOrderRequest";
 import UserAddressModel, { UserAddress } from "../models/UserAddress";
 import UserAddressResource from "../resources/UserAddressResource";
 import SocketManager from "../managers/SocketManager";
+import SimpleOrderResource from "../resources/SimpleOrderResource";
 
 const getOrder: RouteHandler = async (req: IRequest<any>, res) => {
   const user = await UserModel.findById(req.userId);
@@ -147,7 +149,7 @@ const createNewOrder: RouteHandler = async (
   });
   if (productIds.length !== products.length) {
     // do something?
-    console.log("some products not found");
+    // console.log("some products not found");
     return res
       .status(400)
       .json(new ErrorResource("Some products were not found", 400).toJSON());
@@ -212,25 +214,25 @@ const createNewOrder: RouteHandler = async (
     }
   }
 
-  SocketManager.emitMessage(
-    Events.USER_ORDER_CREATE,
-    user.id,
-    new OrderResource(
-      order,
-      userAddress ? new UserAddressResource(userAddress).toJSON() : null,
-      detailedProducts
-    ).toJSON()
-  );
+  const admin = await UserModel.findOne({ role: Roles.SUPER_ADMIN });
 
-  return res
-    .status(200)
-    .json(
-      new OrderResource(
-        order,
-        userAddress ? new UserAddressResource(userAddress).toJSON() : null,
-        detailedProducts
-      ).toJSON()
+  const response = new OrderResource(
+    order,
+    userAddress ? new UserAddressResource(userAddress).toJSON() : null,
+    detailedProducts
+  ).toJSON();
+
+  SocketManager.emitMessage(Events.USER_ORDER_CREATE, user.id, response);
+
+  if (admin) {
+    SocketManager.emitMessage(
+      Events.USER_ORDER_CREATE,
+      admin.id,
+      new SimpleOrderResource(order, user!).toJSON()
     );
+  }
+
+  return res.status(200).json(response);
 };
 
 const OrderController = {

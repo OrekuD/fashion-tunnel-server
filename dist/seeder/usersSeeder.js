@@ -26,7 +26,7 @@ const usersSeeder = () => __awaiter(void 0, void 0, void 0, function* () {
         yield User_1.default.create({
             firstname: firstname,
             lastname: lastname,
-            email: faker_1.faker.internet.email(firstname, lastname),
+            email: faker_1.faker.internet.email(firstname, lastname).toLowerCase(),
             password: hashedPassword,
             deviceType: i % 3 === 0
                 ? types_1.DeviceTypes.WEB

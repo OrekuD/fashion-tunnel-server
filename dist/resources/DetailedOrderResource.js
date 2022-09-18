@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const defaultClasses_1 = require("@typegoose/typegoose/lib/defaultClasses");
 const DetailedUserResource_1 = __importDefault(require("./DetailedUserResource"));
 class DetailedOrderResource extends defaultClasses_1.TimeStamps {
-    constructor(order, user, products) {
+    constructor(order, user, products, deliveryAddress) {
         super();
         this.id = order._id;
         this.total = order.total;
@@ -17,6 +17,8 @@ class DetailedOrderResource extends defaultClasses_1.TimeStamps {
         this.createdAt = order.createdAt;
         this.products = products;
         this.user = user;
+        this.deliveryAddress = deliveryAddress;
+        this.statusTimeStamps = order.statusTimeStamps;
     }
     toJSON() {
         return {
@@ -28,6 +30,8 @@ class DetailedOrderResource extends defaultClasses_1.TimeStamps {
             status: this.status,
             createdAt: this.createdAt,
             products: this.products,
+            deliveryAddress: this.deliveryAddress,
+            statusTimeStamps: this.statusTimeStamps,
             user: this.user ? new DetailedUserResource_1.default(this.user).toJSON() : null,
         };
     }
