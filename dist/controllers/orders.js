@@ -177,9 +177,9 @@ const createNewOrder = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
     const admin = yield User_1.default.findOne({ role: types_1.Roles.SUPER_ADMIN });
     const response = new OrderResource_1.default(order, userAddress ? new UserAddressResource_1.default(userAddress).toJSON() : null, detailedProducts).toJSON();
-    SocketManager_1.default.emitMessage(types_1.Events.USER_ORDER_CREATE, user.id, response);
+    SocketManager_1.default.emitMessage(types_1.Events.USER_ORDER_CREATE, user._id.toString(), response);
     if (admin) {
-        SocketManager_1.default.emitMessage(types_1.Events.USER_ORDER_CREATE, admin.id, new SimpleOrderResource_1.default(order, user).toJSON());
+        SocketManager_1.default.emitMessage(types_1.Events.USER_ORDER_CREATE, admin._id.toString(), new SimpleOrderResource_1.default(order, user).toJSON());
     }
     return res.status(200).json(response);
 });

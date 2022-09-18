@@ -222,12 +222,16 @@ const createNewOrder: RouteHandler = async (
     detailedProducts
   ).toJSON();
 
-  SocketManager.emitMessage(Events.USER_ORDER_CREATE, user.id, response);
+  SocketManager.emitMessage(
+    Events.USER_ORDER_CREATE,
+    user._id.toString(),
+    response
+  );
 
   if (admin) {
     SocketManager.emitMessage(
       Events.USER_ORDER_CREATE,
-      admin.id,
+      admin._id.toString(),
       new SimpleOrderResource(order, user!).toJSON()
     );
   }
