@@ -11,6 +11,7 @@ const admin_1 = __importDefault(require("./admin"));
 const orders_1 = __importDefault(require("./orders"));
 const userAddress_1 = __importDefault(require("./userAddress"));
 const images_1 = __importDefault(require("./images"));
+const search_1 = __importDefault(require("./search"));
 const router = (0, express_1.Router)();
 router.use("/user", user_1.default);
 router.use("/user-address", userAddress_1.default);
@@ -18,6 +19,7 @@ router.use("/products", products_1.default);
 router.use("/favourites", favourites_1.default);
 router.use("/admin", admin_1.default);
 router.use("/orders", orders_1.default);
+router.use("/search", search_1.default);
 router.use("/upload/images", images_1.default);
 exports.default = router;
 //# sourceMappingURL=index.js.map

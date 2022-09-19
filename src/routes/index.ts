@@ -6,6 +6,7 @@ import AdminRoutes from "./admin";
 import OrdersRoutes from "./orders";
 import UserAddressRoutes from "./userAddress";
 import ImagesRoutes from "./images";
+import SearchRoutes from "./search";
 
 const router = Router();
 
@@ -15,6 +16,7 @@ router.use("/products", ProductsRoutes);
 router.use("/favourites", FavouritesRoutes);
 router.use("/admin", AdminRoutes);
 router.use("/orders", OrdersRoutes);
+router.use("/search", SearchRoutes);
 router.use("/upload/images", ImagesRoutes);
 
 export default router;
