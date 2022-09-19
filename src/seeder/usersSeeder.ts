@@ -35,6 +35,7 @@ const usersSeeder = async () => {
           : DeviceTypes.IOS,
       activeAddressId: "",
       role: Roles.USER,
+      profilePicture: faker.internet.avatar(),
     });
 
     console.log(`User ${userNumber} seeded`);

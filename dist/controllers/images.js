@@ -22,24 +22,42 @@ const uploadImages = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const images = [];
     try {
         const files = req.files.images;
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
+        if (Array.isArray(files)) {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                yield new Promise((resolve) => {
+                    file.mv(`${__dirname}/${file.name}`, (error) => __awaiter(void 0, void 0, void 0, function* () {
+                        if (error) {
+                        }
+                        const { url } = yield (0, uploadFile_1.uploadFile)(path_1.default.join(__dirname, file.name), {
+                            access_mode: "public",
+                            folder: "/images",
+                        });
+                        images.push(url);
+                        fs_1.default.unlinkSync(`${__dirname}/${file.name}`);
+                        resolve(url);
+                    }));
+                });
+            }
+        }
+        else {
             yield new Promise((resolve) => {
-                file.mv(`${__dirname}/${file.name}`, (error) => __awaiter(void 0, void 0, void 0, function* () {
+                files.mv(`${__dirname}/${files.name}`, (error) => __awaiter(void 0, void 0, void 0, function* () {
                     if (error) {
                     }
-                    const { url } = yield (0, uploadFile_1.uploadFile)(path_1.default.join(__dirname, file.name), {
+                    const { url } = yield (0, uploadFile_1.uploadFile)(path_1.default.join(__dirname, files.name), {
                         access_mode: "public",
                         folder: "/images",
                     });
                     images.push(url);
-                    fs_1.default.unlinkSync(`${__dirname}/${file.name}`);
+                    fs_1.default.unlinkSync(`${__dirname}/${files.name}`);
                     resolve(url);
                 }));
             });
         }
     }
     catch (error) {
+        console.log({ error });
         return res.status(500).send({ message: "File upload unsuccessful" });
     }
     return res.status(200).send({ images });

@@ -1,6 +1,7 @@
 import argon2 from "argon2";
 import { DeviceTypes, Roles } from "../types";
 import UserModel from "../models/User";
+import { faker } from "@faker-js/faker";
 
 const adminSeeder = async () => {
   const admin = await UserModel.findOne({ role: Roles.SUPER_ADMIN });
@@ -23,6 +24,7 @@ const adminSeeder = async () => {
       deviceType: DeviceTypes.WEB,
       activeAddressId: "",
       role: Roles.SUPER_ADMIN,
+      profilePicture: faker.internet.avatar(),
     });
   } catch (error) {
     console.log({ error });

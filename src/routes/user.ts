@@ -5,11 +5,7 @@ import { validateUser } from "../middlewares/validateUser";
 const router = Router();
 router.post("/sign-up", UserController.signup);
 router.post("/sign-in", UserController.signin);
-router.post(
-  "/upload-profile-image",
-  validateUser,
-  UserController.uploadProfileImage
-);
+router.put("/profile-image", validateUser, UserController.updateProfileImage);
 router.get("/sign-out", validateUser, UserController.signout);
 router.get("/", validateUser, UserController.user);
 router.put("/", validateUser, UserController.updateUser);

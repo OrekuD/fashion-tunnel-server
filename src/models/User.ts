@@ -21,6 +21,9 @@ export class User extends TimeStamps {
   @prop()
   public activeAddressId: string;
 
+  @prop()
+  public profilePicture: string;
+
   @prop({ required: true })
   public role!: Roles;
 

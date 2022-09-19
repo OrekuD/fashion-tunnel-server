@@ -9,6 +9,7 @@ class DetailedUserResource extends defaultClasses_1.TimeStamps {
         this.firstname = user.firstname;
         this.lastname = user.lastname;
         this.deviceType = user.deviceType;
+        this.profilePicture = user.profilePicture;
         this.createdAt = user.createdAt;
     }
     toJSON() {
@@ -19,6 +20,7 @@ class DetailedUserResource extends defaultClasses_1.TimeStamps {
             firstname: this.firstname,
             lastname: this.lastname,
             deviceType: this.deviceType,
+            profilePicture: this.profilePicture,
             createdAt: (_a = this.createdAt) === null || _a === void 0 ? void 0 : _a.toISOString(),
         };
     }

@@ -1,7 +1,5 @@
 import { Events, IRequest, Roles, RouteHandler } from "../types";
 import argon2 from "argon2";
-import fs from "fs";
-import { UploadedFile } from "express-fileupload";
 import UserModel from "../models/User";
 import { Response } from "express";
 import validateEmail from "../validation/validateEmail";
@@ -16,6 +14,7 @@ import UpdateUserRequest from "../requests/UpdateUserRequest";
 import ValidateEmailRequest from "../requests/ValidateEmailRequest";
 import ChangePasswordRequest from "../requests/ChangePasswordRequest";
 import SocketManager from "../managers/SocketManager";
+import UpdateUserProfileImageRequest from "../requests/UpdateUserProfileImageRequest";
 
 const signup: RouteHandler = async (
   req: IRequest<SignUpRequest>,
@@ -102,49 +101,35 @@ const signin: RouteHandler = async (req: IRequest<SignInRequest>, res) => {
   }
 };
 
-const uploadProfileImage: RouteHandler = async (req: IRequest<any>, res) => {
+const updateProfileImage: RouteHandler = async (
+  req: IRequest<UpdateUserProfileImageRequest>,
+  res
+) => {
   const user = await UserModel.findById(req.userId);
   if (!user) {
-    return res.status(404).json({ message: "User not found" });
+    return res
+      .status(404)
+      .json(new ErrorResource("User not found", 404).toJSON());
   }
-  if (!req.files) {
-    return res.status(400).send({ message: "No file provided" });
-  }
-  try {
-    const file = req.files.image as UploadedFile;
-    file.mv(`${__dirname}/${file.name}`, async (error) => {
-      if (error) {
-        return res.status(500).send({ message: "File upload unsuccessful" });
-      }
 
-      //   const { url, publicId } = await uploadFile(
-      //     path.join(__dirname, file.name),
-      //     { access_mode: "public", folder: "/profile_images" }
-      //   );
-      //   if (user.profileImage?.publicId) {
-      //     const __res = await cloudinary.uploader.destroy(
-      //       user.profileImage?.publicId
-      //     );
-      //     console.log({ __res });
-      //   }
-      //   const _res = await UserModel.updateOne(
-      //     { _id: user.id },
-      //     { profileImage: { url, publicId } }
-      //   );
-      try {
-        fs.unlinkSync(`${__dirname}/${file.name}`);
-        return res
-          .status(200)
-          .send({ message: "File upload successful", url: "" });
-      } catch (error) {
-        return res.status(500).send({ message: "File upload unsuccessful" });
-      }
-    });
+  user.profilePicture = req.body.profilePicture.trim();
+  await user.save();
 
-    return res.status(500).send({ message: "File upload unsuccessful" });
-  } catch (error) {
-    return res.status(500).send({ message: "File upload unsuccessful" });
-  }
+  // await UserModel.updateOne(
+  //   { _id: req.userId },
+  //   {
+  //     email: req.body.email.trim().toLowerCase(),
+  //     firstname: req.body.firstname.trim(),
+  //     lastname: req.body.lastname.trim(),
+  //   }
+  // );
+  SocketManager.emitMessage(
+    Events.USER_PROFILE_UPDATE,
+    user._id.toString(),
+    new UserResource(user).toJSON()
+  );
+
+  return res.status(200).json(new UserResource(user).toJSON());
 };
 
 export const user: RouteHandler = async (req: IRequest<any>, res) => {
@@ -207,7 +192,7 @@ const updateUser: RouteHandler = async (
   // );
   SocketManager.emitMessage(
     Events.USER_PROFILE_UPDATE,
-    user.id,
+    user._id.toString(),
     new UserResource(user).toJSON()
   );
 
@@ -272,7 +257,7 @@ const validateUserEmail: RouteHandler = async (
 const UserController = {
   signup,
   signin,
-  uploadProfileImage,
+  updateProfileImage,
   user,
   signout,
   updateUser,

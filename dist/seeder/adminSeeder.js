@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const argon2_1 = __importDefault(require("argon2"));
 const types_1 = require("../types");
 const User_1 = __importDefault(require("../models/User"));
+const faker_1 = require("@faker-js/faker");
 const adminSeeder = () => __awaiter(void 0, void 0, void 0, function* () {
     const admin = yield User_1.default.findOne({ role: types_1.Roles.SUPER_ADMIN });
     if (admin) {
@@ -32,6 +33,7 @@ const adminSeeder = () => __awaiter(void 0, void 0, void 0, function* () {
             deviceType: types_1.DeviceTypes.WEB,
             activeAddressId: "",
             role: types_1.Roles.SUPER_ADMIN,
+            profilePicture: faker_1.faker.internet.avatar(),
         });
     }
     catch (error) {

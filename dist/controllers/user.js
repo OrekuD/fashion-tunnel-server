@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.signout = exports.user = void 0;
 const types_1 = require("../types");
 const argon2_1 = __importDefault(require("argon2"));
-const fs_1 = __importDefault(require("fs"));
 const User_1 = __importDefault(require("../models/User"));
 const validateEmail_1 = __importDefault(require("../validation/validateEmail"));
 const validateName_1 = __importDefault(require("../validation/validateName"));
@@ -100,35 +99,17 @@ const signin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             .json(new ErrorResource_1.default("Login unsuccessful", 500).toJSON());
     }
 });
-const uploadProfileImage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const updateProfileImage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield User_1.default.findById(req.userId);
     if (!user) {
-        return res.status(404).json({ message: "User not found" });
+        return res
+            .status(404)
+            .json(new ErrorResource_1.default("User not found", 404).toJSON());
     }
-    if (!req.files) {
-        return res.status(400).send({ message: "No file provided" });
-    }
-    try {
-        const file = req.files.image;
-        file.mv(`${__dirname}/${file.name}`, (error) => __awaiter(void 0, void 0, void 0, function* () {
-            if (error) {
-                return res.status(500).send({ message: "File upload unsuccessful" });
-            }
-            try {
-                fs_1.default.unlinkSync(`${__dirname}/${file.name}`);
-                return res
-                    .status(200)
-                    .send({ message: "File upload successful", url: "" });
-            }
-            catch (error) {
-                return res.status(500).send({ message: "File upload unsuccessful" });
-            }
-        }));
-        return res.status(500).send({ message: "File upload unsuccessful" });
-    }
-    catch (error) {
-        return res.status(500).send({ message: "File upload unsuccessful" });
-    }
+    user.profilePicture = req.body.profilePicture.trim();
+    yield user.save();
+    SocketManager_1.default.emitMessage(types_1.Events.USER_PROFILE_UPDATE, user._id.toString(), new UserResource_1.default(user).toJSON());
+    return res.status(200).json(new UserResource_1.default(user).toJSON());
 });
 const user = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield User_1.default.findById(req.userId);
@@ -169,7 +150,7 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     user.lastname = req.body.lastname.trim();
     user.activeAddressId = req.body.activeAddressId.trim();
     yield user.save();
-    SocketManager_1.default.emitMessage(types_1.Events.USER_PROFILE_UPDATE, user.id, new UserResource_1.default(user).toJSON());
+    SocketManager_1.default.emitMessage(types_1.Events.USER_PROFILE_UPDATE, user._id.toString(), new UserResource_1.default(user).toJSON());
     return res.status(200).json(new UserResource_1.default(user).toJSON());
 });
 const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -212,7 +193,7 @@ const validateUserEmail = (req, res) => __awaiter(void 0, void 0, void 0, functi
 const UserController = {
     signup,
     signin,
-    uploadProfileImage,
+    updateProfileImage,
     user: exports.user,
     signout: exports.signout,
     updateUser,

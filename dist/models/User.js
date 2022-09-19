@@ -40,6 +40,10 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "activeAddressId", void 0);
 __decorate([
+    (0, typegoose_1.prop)(),
+    __metadata("design:type", String)
+], User.prototype, "profilePicture", void 0);
+__decorate([
     (0, typegoose_1.prop)({ required: true }),
     __metadata("design:type", Number)
 ], User.prototype, "role", void 0);

@@ -25,7 +25,6 @@ const uploadFile = (path, options) => __awaiter(void 0, void 0, void 0, function
         throw new Error("File does not exist");
     }
     catch (err) {
-        console.log({ err });
         throw err;
     }
 });

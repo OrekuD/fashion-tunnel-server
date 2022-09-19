@@ -15,6 +15,7 @@ export default class DetailedUserResource extends TimeStamps {
   private firstname: string;
   private lastname: string;
   private deviceType: string;
+  private profilePicture: string;
 
   constructor(user: User) {
     super();
@@ -23,6 +24,7 @@ export default class DetailedUserResource extends TimeStamps {
     this.firstname = user.firstname;
     this.lastname = user.lastname;
     this.deviceType = user.deviceType;
+    this.profilePicture = user.profilePicture;
     this.createdAt = user.createdAt;
   }
 
@@ -33,6 +35,7 @@ export default class DetailedUserResource extends TimeStamps {
       firstname: this.firstname,
       lastname: this.lastname,
       deviceType: this.deviceType,
+      profilePicture: this.profilePicture,
       createdAt: this.createdAt?.toISOString(),
     };
   }

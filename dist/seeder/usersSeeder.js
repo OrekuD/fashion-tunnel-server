@@ -36,6 +36,7 @@ const usersSeeder = () => __awaiter(void 0, void 0, void 0, function* () {
                     : types_1.DeviceTypes.IOS,
             activeAddressId: "",
             role: types_1.Roles.USER,
+            profilePicture: faker_1.faker.internet.avatar(),
         });
         console.log(`User ${userNumber} seeded`);
     }

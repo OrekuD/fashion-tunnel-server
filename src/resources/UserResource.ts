@@ -11,6 +11,7 @@ export default class UserResource {
   private email: string;
   private firstname: string;
   private lastname: string;
+  private profilePicture: string;
   private activeAddressId: string;
 
   constructor(user: User) {
@@ -18,6 +19,7 @@ export default class UserResource {
     this.firstname = user.firstname;
     this.lastname = user.lastname;
     this.activeAddressId = user.activeAddressId;
+    this.profilePicture = user.profilePicture;
   }
 
   toJSON() {
@@ -26,6 +28,7 @@ export default class UserResource {
       firstname: this.firstname,
       lastname: this.lastname,
       activeAddressId: this.activeAddressId,
+      profilePicture: this.profilePicture,
     };
   }
 }

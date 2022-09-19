@@ -12,6 +12,7 @@ export default class SimpleOrderResource extends TimeStamps {
   private user: {
     id: string;
     email: string;
+    profilePicture: string;
   };
   private statusTimeStamps: Array<OrderStatusTimeStamp>;
 
@@ -26,6 +27,7 @@ export default class SimpleOrderResource extends TimeStamps {
     this.user = {
       id: (user as any)?._id,
       email: user.email!,
+      profilePicture: user.profilePicture!,
     };
     this.statusTimeStamps = order.statusTimeStamps;
   }

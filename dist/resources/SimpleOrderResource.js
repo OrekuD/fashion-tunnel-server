@@ -13,6 +13,7 @@ class SimpleOrderResource extends defaultClasses_1.TimeStamps {
         this.user = {
             id: user === null || user === void 0 ? void 0 : user._id,
             email: user.email,
+            profilePicture: user.profilePicture,
         };
         this.statusTimeStamps = order.statusTimeStamps;
     }

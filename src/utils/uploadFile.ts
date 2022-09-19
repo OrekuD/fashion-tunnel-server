@@ -14,7 +14,7 @@ export const uploadFile = async (path: string, options: UploadApiOptions) => {
     }
     throw new Error("File does not exist");
   } catch (err) {
-    console.log({ err });
+    // console.log({ err });
     throw err;
   }
 };

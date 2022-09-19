@@ -24,7 +24,6 @@ const onSocketConnect = (socket, socketClients) => __awaiter(void 0, void 0, voi
             }
             if (user.userId) {
                 socketClients.push({ id: socket.id, userId: user.userId });
-                console.log("---");
                 console.info(`Socket ${socket.id} with user id ${user.userId} has connected.`);
             }
         });
