@@ -92,6 +92,12 @@ export interface OrderProduct {
   total: number;
 }
 
+export interface Chart {
+  name: string;
+  users: number;
+  orders: number;
+}
+
 export interface Address {
   id: string;
   name: string;

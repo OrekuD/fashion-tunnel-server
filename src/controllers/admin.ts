@@ -2,6 +2,7 @@ import argon2 from "argon2";
 import DetailedUserResource from "../resources/DetailedUserResource";
 import UserModel from "../models/User";
 import {
+  Chart,
   DetailedOrderProduct,
   Events,
   IRequest,
@@ -30,6 +31,7 @@ import toNumber from "../utils/toNumber";
 import PaginatedResource from "../resources/PaginatedResource";
 import UserAddressModel from "../models/UserAddress";
 import UserAddressResource from "../resources/UserAddressResource";
+import { subDays } from "date-fns";
 
 const getAllUsers: RouteHandler = async (req, res) => {
   const page = req.query.page ? toNumber(req.query.page as string) : 0;
@@ -56,12 +58,51 @@ const getAllUsers: RouteHandler = async (req, res) => {
 };
 
 const getSummary: RouteHandler = async (_, res) => {
+  const products = await ProductModel.find();
   const orders = await OrderModel.find();
   const users = await UserModel.find({ role: Roles.USER });
   const income = orders.reduce((sum, order) => sum + order.total, 0);
+  const chartOrders = await OrderModel.find({
+    createdAt: {
+      $gte: subDays(new Date(), 6),
+      $lte: new Date(),
+    },
+  });
+  const chartUsers = await UserModel.find({
+    createdAt: {
+      $gte: subDays(new Date(), 6),
+      $lte: new Date(),
+    },
+  });
+
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thurs", "Fri", "Sat"];
+
+  const chart: Array<Chart> = days.map((day, index) => {
+    const orders = chartOrders.filter(
+      ({ createdAt }) => createdAt?.getDay() === index
+    );
+    const users = chartUsers.filter(
+      ({ createdAt }) => createdAt?.getDay() === index
+    );
+
+    return {
+      name: day,
+      users: users.length,
+      orders: orders.length,
+    };
+  });
+
   return res
     .status(200)
-    .json(new SummaryResource(income, users.length, orders.length).toJSON());
+    .json(
+      new SummaryResource(
+        income,
+        users.length,
+        orders.length,
+        products.length,
+        chart
+      ).toJSON()
+    );
 };
 
 const getAllOrders: RouteHandler = async (req, res) => {

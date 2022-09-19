@@ -33,6 +33,7 @@ const toNumber_1 = __importDefault(require("../utils/toNumber"));
 const PaginatedResource_1 = __importDefault(require("../resources/PaginatedResource"));
 const UserAddress_1 = __importDefault(require("../models/UserAddress"));
 const UserAddressResource_1 = __importDefault(require("../resources/UserAddressResource"));
+const date_fns_1 = require("date-fns");
 const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const page = req.query.page ? (0, toNumber_1.default)(req.query.page) : 0;
     const size = req.query.size ? (0, toNumber_1.default)(req.query.size) : 0;
@@ -51,12 +52,35 @@ const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }, list.map((user) => new DetailedUserResource_1.default(user).toJSON())));
 });
 const getSummary = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const products = yield Product_1.default.find();
     const orders = yield Order_1.default.find();
     const users = yield User_1.default.find({ role: types_1.Roles.USER });
     const income = orders.reduce((sum, order) => sum + order.total, 0);
+    const chartOrders = yield Order_1.default.find({
+        createdAt: {
+            $gte: (0, date_fns_1.subDays)(new Date(), 6),
+            $lte: new Date(),
+        },
+    });
+    const chartUsers = yield User_1.default.find({
+        createdAt: {
+            $gte: (0, date_fns_1.subDays)(new Date(), 6),
+            $lte: new Date(),
+        },
+    });
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thurs", "Fri", "Sat"];
+    const chart = days.map((day, index) => {
+        const orders = chartOrders.filter(({ createdAt }) => (createdAt === null || createdAt === void 0 ? void 0 : createdAt.getDay()) === index);
+        const users = chartUsers.filter(({ createdAt }) => (createdAt === null || createdAt === void 0 ? void 0 : createdAt.getDay()) === index);
+        return {
+            name: day,
+            users: users.length,
+            orders: orders.length,
+        };
+    });
     return res
         .status(200)
-        .json(new SummaryResource_1.default(income, users.length, orders.length).toJSON());
+        .json(new SummaryResource_1.default(income, users.length, orders.length, products.length, chart).toJSON());
 });
 const getAllOrders = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const page = req.query.page ? (0, toNumber_1.default)(req.query.page) : 0;
