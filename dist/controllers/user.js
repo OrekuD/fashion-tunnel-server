@@ -59,6 +59,7 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             password: hashedPassword,
             deviceType,
             activeAddressId: "",
+            profilePicture: "",
             role: types_1.Roles.USER,
         });
         return res.status(200).json(new AuthResource_1.default(user, deviceType).toJSON());

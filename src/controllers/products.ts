@@ -1,10 +1,11 @@
 import ErrorResource from "../resources/ErrorResource";
 import ProductModel from "../models/Product";
 import { IRequest, RouteHandler } from "./../types";
-import { Response } from "express";
 import ProductResource from "../resources/ProductResource";
+import SearchProductRequest from "src/requests/SearchProductRequest";
+import Fuse from "fuse.js";
 
-const getProducts: RouteHandler = async (_, res: Response) => {
+const getProducts: RouteHandler = async (_, res) => {
   const data = await ProductModel.find().sort({
     createdAt: -1,
   });
@@ -14,7 +15,7 @@ const getProducts: RouteHandler = async (_, res: Response) => {
     .json(data.map((product) => new ProductResource(product).toJSON()));
 };
 
-const getProduct: RouteHandler = async (req: IRequest<any>, res: Response) => {
+const getProduct: RouteHandler = async (req: IRequest<any>, res) => {
   const productId = req.params.productId;
   const product = await ProductModel.findOne({ id: productId });
 
@@ -26,6 +27,22 @@ const getProduct: RouteHandler = async (req: IRequest<any>, res: Response) => {
   return res.status(200).json(new ProductResource(product).toJSON());
 };
 
-const ProductsController = { getProducts, getProduct };
+const searchProducts: RouteHandler = async (
+  req: IRequest<SearchProductRequest>,
+  res
+) => {
+  const products = await ProductModel.find();
+  const fuse = new Fuse(products, {
+    keys: ["name"],
+  });
+
+  const response = fuse.search(req.body.query);
+
+  return res
+    .status(200)
+    .json(response.map(({ item }) => new ProductResource(item).toJSON()));
+};
+
+const ProductsController = { getProducts, getProduct, searchProducts };
 
 export default ProductsController;

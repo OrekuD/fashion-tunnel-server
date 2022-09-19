@@ -7,6 +7,7 @@ const express_1 = require("express");
 const products_1 = __importDefault(require("../controllers/products"));
 const router = (0, express_1.Router)();
 router.get("/", products_1.default.getProducts);
+router.get("/search", products_1.default.searchProducts);
 router.get("/:productId", products_1.default.getProduct);
 exports.default = router;
 //# sourceMappingURL=products.js.map

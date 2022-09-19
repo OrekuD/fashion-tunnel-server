@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ErrorResource_1 = __importDefault(require("../resources/ErrorResource"));
 const Product_1 = __importDefault(require("../models/Product"));
 const ProductResource_1 = __importDefault(require("../resources/ProductResource"));
+const fuse_js_1 = __importDefault(require("fuse.js"));
 const getProducts = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
     const data = yield Product_1.default.find().sort({
         createdAt: -1,
@@ -33,6 +34,16 @@ const getProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
     return res.status(200).json(new ProductResource_1.default(product).toJSON());
 });
-const ProductsController = { getProducts, getProduct };
+const searchProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const products = yield Product_1.default.find();
+    const fuse = new fuse_js_1.default(products, {
+        keys: ["name"],
+    });
+    const response = fuse.search(req.body.query);
+    return res
+        .status(200)
+        .json(response.map(({ item }) => new ProductResource_1.default(item).toJSON()));
+});
+const ProductsController = { getProducts, getProduct, searchProducts };
 exports.default = ProductsController;
 //# sourceMappingURL=products.js.map

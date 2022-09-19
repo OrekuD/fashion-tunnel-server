@@ -58,6 +58,7 @@ const signup: RouteHandler = async (
       password: hashedPassword,
       deviceType,
       activeAddressId: "",
+      profilePicture: "",
       role: Roles.USER,
     });
 
