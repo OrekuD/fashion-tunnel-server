@@ -4,13 +4,6 @@ import UserModel from "../models/User";
 import { faker } from "@faker-js/faker";
 
 const usersSeeder = async () => {
-  // const admin = await UserModel.find({ role: Roles.USER });
-
-  // if (admin) {
-  //   console.info("Admin already seeded");
-  //   return;
-  // }
-
   return;
 
   console.info("⚡️ Users seeding started");

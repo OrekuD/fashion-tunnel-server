@@ -50,7 +50,7 @@ const addNewAddress: RouteHandler = async (
 
   SocketManager.emitMessage(
     Events.USER_PROFILE_UPDATE,
-    user.id,
+    user._id.toString(),
     new UserAddressResource(userAddress).toJSON()
   );
   return res.status(200).json(new UserAddressResource(userAddress).toJSON());

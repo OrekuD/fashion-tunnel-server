@@ -48,7 +48,7 @@ const addNewAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         addressLine: req.body.addressLine,
         postalCode: req.body.postalCode,
     });
-    SocketManager_1.default.emitMessage(types_1.Events.USER_PROFILE_UPDATE, user.id, new UserAddressResource_1.default(userAddress).toJSON());
+    SocketManager_1.default.emitMessage(types_1.Events.USER_PROFILE_UPDATE, user._id.toString(), new UserAddressResource_1.default(userAddress).toJSON());
     return res.status(200).json(new UserAddressResource_1.default(userAddress).toJSON());
 });
 const updateAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* () {

@@ -50,7 +50,7 @@ const updateFavourites = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 .json(new ErrorResource_1.default("There was an issue adding your new favourite", 500).toJSON());
         }
     }
-    SocketManager_1.default.emitMessage(types_1.Events.USER_FAVOURITE_ITEM, user.id, {
+    SocketManager_1.default.emitMessage(types_1.Events.USER_FAVOURITE_ITEM, user._id.toString(), {
         product,
         hasLiked: Boolean(alreadyAdded),
     });
