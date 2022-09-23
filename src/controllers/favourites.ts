@@ -49,7 +49,7 @@ const updateFavourites: RouteHandler = async (
   }
 
   SocketManager.emitMessage(Events.USER_FAVOURITE_ITEM, user._id.toString(), {
-    product,
+    product: new ProductResource(product).toJSON(),
     hasLiked: !Boolean(alreadyAdded),
   });
   return res.status(200).json(new OkResource().toJSON());

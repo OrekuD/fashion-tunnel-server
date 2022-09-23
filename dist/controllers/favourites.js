@@ -51,7 +51,7 @@ const updateFavourites = (req, res) => __awaiter(void 0, void 0, void 0, functio
         }
     }
     SocketManager_1.default.emitMessage(types_1.Events.USER_FAVOURITE_ITEM, user._id.toString(), {
-        product,
+        product: new ProductResource_1.default(product).toJSON(),
         hasLiked: !Boolean(alreadyAdded),
     });
     return res.status(200).json(new OkResource_1.default().toJSON());
