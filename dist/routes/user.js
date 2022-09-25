@@ -9,6 +9,8 @@ const validateUser_1 = require("../middlewares/validateUser");
 const router = (0, express_1.Router)();
 router.post("/sign-up", user_1.default.signup);
 router.post("/sign-in", user_1.default.signin);
+router.post("/forgot-password", user_1.default.forgotPassword);
+router.post("/reset-password", user_1.default.resetPassword);
 router.put("/profile-image", validateUser_1.validateUser, user_1.default.updateProfileImage);
 router.get("/sign-out", validateUser_1.validateUser, user_1.default.signout);
 router.get("/", validateUser_1.validateUser, user_1.default.user);

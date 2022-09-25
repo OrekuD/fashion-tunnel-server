@@ -15,6 +15,12 @@ import ValidateEmailRequest from "../requests/ValidateEmailRequest";
 import ChangePasswordRequest from "../requests/ChangePasswordRequest";
 import SocketManager from "../managers/SocketManager";
 import UpdateUserProfileImageRequest from "../requests/UpdateUserProfileImageRequest";
+import ForgotPasswordRequest from "../requests/ForgotPasswordRequest";
+import generateRandomCode from "../utils/generateRandomCode";
+import ResetCodeModel from "../models/ResetCode";
+import ResetPasswordRequest from "../requests/ResetPasswordRequest";
+import sendEmail from "../utils/sendEmail";
+import getForgotPasswordTemplate from "../templates/getForgotPasswordTemplate";
 
 const signup: RouteHandler = async (
   req: IRequest<SignUpRequest>,
@@ -62,7 +68,7 @@ const signup: RouteHandler = async (
       role: Roles.USER,
     });
 
-    return res.status(200).json(new AuthResource(user, deviceType).toJSON());
+    return res.status(200).json(new AuthResource(user).toJSON());
   } catch (err) {
     // console.log({ err });
     return res
@@ -74,7 +80,6 @@ const signup: RouteHandler = async (
 const signin: RouteHandler = async (req: IRequest<SignInRequest>, res) => {
   const email = req.body.email.trim().toLowerCase();
   const password = req.body.password.trim();
-  const deviceType = req.body.deviceType;
   if (!validateEmail(email)) {
     return res
       .status(400)
@@ -94,7 +99,7 @@ const signin: RouteHandler = async (req: IRequest<SignInRequest>, res) => {
         .status(400)
         .json(new ErrorResource("Password is invalid", 400));
     }
-    return res.status(200).json(new AuthResource(user, deviceType).toJSON());
+    return res.status(200).json(new AuthResource(user).toJSON());
   } catch {
     return res
       .status(500)
@@ -136,7 +141,9 @@ const updateProfileImage: RouteHandler = async (
 export const user: RouteHandler = async (req: IRequest<any>, res) => {
   const user = await UserModel.findById(req.userId);
   if (!user) {
-    return res.status(404).json({ message: "User not found" });
+    return res
+      .status(404)
+      .json(new ErrorResource("User not found", 404).toJSON());
   }
 
   return res.status(200).json(new UserResource(user).toJSON());
@@ -255,6 +262,88 @@ const validateUserEmail: RouteHandler = async (
   return res.status(200).json(new OkResource().toJSON());
 };
 
+const forgotPassword: RouteHandler = async (
+  req: IRequest<ForgotPasswordRequest>,
+  res
+) => {
+  const user = await UserModel.findOne({
+    email: req.body.email.trim().toLowerCase(),
+  });
+
+  if (!user) {
+    return res
+      .status(404)
+      .json(new ErrorResource("User not found", 404).toJSON());
+  }
+
+  const code = generateRandomCode();
+
+  await ResetCodeModel.create({
+    code,
+    userId: user._id.toString(),
+    expiresAt: new Date(),
+  });
+
+  sendEmail(
+    req.body.email.trim(),
+    "Password reset",
+    getForgotPasswordTemplate(user.firstname, code)
+  );
+
+  return res.status(200).json(new OkResource().toJSON());
+};
+
+const resetPassword: RouteHandler = async (
+  req: IRequest<ResetPasswordRequest>,
+  res
+) => {
+  const code = await ResetCodeModel.findOne({
+    code: req.body.code.trim(),
+  });
+
+  if (!code) {
+    return res
+      .status(400)
+      .json(new ErrorResource("Code is invalid", 400).toJSON());
+  }
+
+  const user = await UserModel.findOne({
+    email: req.body.email.trim().toLowerCase(),
+  });
+
+  if (!user) {
+    return res
+      .status(404)
+      .json(new ErrorResource("User not found", 404).toJSON());
+  }
+
+  if (user._id.toString() !== code.userId) {
+    return res
+      .status(400)
+      .json(new ErrorResource("Request invalid", 400).toJSON());
+  }
+
+  await ResetCodeModel.deleteOne({
+    code: code.code,
+  });
+
+  const hashedPassword = await argon2.hash(req.body.password.trim());
+
+  user.password = hashedPassword;
+
+  await user.save();
+
+  // await UserModel.updateOne({ id: user.id }, { password: hashedPassword });
+
+  // sendEmail(
+  //   "opokudavid446@gmail.com",
+  //   "test",
+  //   getForgotPasswordTemplate("Dennis", "3493", "2023")
+  // );
+
+  return res.status(200).json(new AuthResource(user).toJSON());
+};
+
 const UserController = {
   signup,
   signin,
@@ -264,6 +353,8 @@ const UserController = {
   updateUser,
   validateUserEmail,
   changePassword,
+  forgotPassword,
+  resetPassword,
 };
 
 export default UserController;

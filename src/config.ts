@@ -16,6 +16,8 @@ const config = {
   CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_FOLDER: process.env.CLOUDINARY_FOLDER,
   NODE_ENV: process.env.NODE_ENV,
+  MAILGUN_API_KEY: process.env.MAILGUN_API_KEY,
+  MAILGUN_DOMAIN: process.env.MAILGUN_DOMAIN,
 };
 
 export default config;

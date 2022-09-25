@@ -7,9 +7,9 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = __importDefault(require("../config"));
 const UserResource_1 = __importDefault(require("./UserResource"));
 class AuthResource {
-    constructor(user, deviceType) {
+    constructor(user) {
         this.accessToken = jsonwebtoken_1.default.sign({ userId: user._id }, config_1.default.JWT_SECRET);
-        this.deviceType = deviceType;
+        this.deviceType = user.deviceType;
         this.user = user;
     }
     toJSON() {

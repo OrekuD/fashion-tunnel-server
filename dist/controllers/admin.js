@@ -228,7 +228,6 @@ const updateOrderStatus = (req, res) => __awaiter(void 0, void 0, void 0, functi
 const signin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const email = req.body.email.trim().toLowerCase();
     const password = req.body.password.trim();
-    const deviceType = req.body.deviceType;
     if (!(0, validateEmail_1.default)(email)) {
         return res
             .status(400)
@@ -247,7 +246,7 @@ const signin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 .status(400)
                 .json(new ErrorResource_1.default("Password is invalid", 400));
         }
-        return res.status(200).json(new AuthResource_1.default(user, deviceType).toJSON());
+        return res.status(200).json(new AuthResource_1.default(user).toJSON());
     }
     catch (_a) {
         return res

@@ -23,6 +23,10 @@ const UserResource_1 = __importDefault(require("../resources/UserResource"));
 const ErrorResource_1 = __importDefault(require("../resources/ErrorResource"));
 const OkResource_1 = __importDefault(require("../resources/OkResource"));
 const SocketManager_1 = __importDefault(require("../managers/SocketManager"));
+const generateRandomCode_1 = __importDefault(require("../utils/generateRandomCode"));
+const ResetCode_1 = __importDefault(require("../models/ResetCode"));
+const sendEmail_1 = __importDefault(require("../utils/sendEmail"));
+const getForgotPasswordTemplate_1 = __importDefault(require("../templates/getForgotPasswordTemplate"));
 const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const email = req.body.email.trim().toLowerCase();
     const firstname = req.body.firstname.trim();
@@ -62,7 +66,7 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             profilePicture: "",
             role: types_1.Roles.USER,
         });
-        return res.status(200).json(new AuthResource_1.default(user, deviceType).toJSON());
+        return res.status(200).json(new AuthResource_1.default(user).toJSON());
     }
     catch (err) {
         return res
@@ -73,7 +77,6 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 const signin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const email = req.body.email.trim().toLowerCase();
     const password = req.body.password.trim();
-    const deviceType = req.body.deviceType;
     if (!(0, validateEmail_1.default)(email)) {
         return res
             .status(400)
@@ -92,7 +95,7 @@ const signin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 .status(400)
                 .json(new ErrorResource_1.default("Password is invalid", 400));
         }
-        return res.status(200).json(new AuthResource_1.default(user, deviceType).toJSON());
+        return res.status(200).json(new AuthResource_1.default(user).toJSON());
     }
     catch (_a) {
         return res
@@ -115,7 +118,9 @@ const updateProfileImage = (req, res) => __awaiter(void 0, void 0, void 0, funct
 const user = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield User_1.default.findById(req.userId);
     if (!user) {
-        return res.status(404).json({ message: "User not found" });
+        return res
+            .status(404)
+            .json(new ErrorResource_1.default("User not found", 404).toJSON());
     }
     return res.status(200).json(new UserResource_1.default(user).toJSON());
 });
@@ -191,6 +196,54 @@ const validateUserEmail = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
     return res.status(200).json(new OkResource_1.default().toJSON());
 });
+const forgotPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield User_1.default.findOne({
+        email: req.body.email.trim().toLowerCase(),
+    });
+    if (!user) {
+        return res
+            .status(404)
+            .json(new ErrorResource_1.default("User not found", 404).toJSON());
+    }
+    const code = (0, generateRandomCode_1.default)();
+    yield ResetCode_1.default.create({
+        code,
+        userId: user._id.toString(),
+        expiresAt: new Date(),
+    });
+    (0, sendEmail_1.default)(req.body.email.trim(), "Password reset", (0, getForgotPasswordTemplate_1.default)(user.firstname, code));
+    return res.status(200).json(new OkResource_1.default().toJSON());
+});
+const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const code = yield ResetCode_1.default.findOne({
+        code: req.body.code.trim(),
+    });
+    if (!code) {
+        return res
+            .status(400)
+            .json(new ErrorResource_1.default("Code is invalid", 400).toJSON());
+    }
+    const user = yield User_1.default.findOne({
+        email: req.body.email.trim().toLowerCase(),
+    });
+    if (!user) {
+        return res
+            .status(404)
+            .json(new ErrorResource_1.default("User not found", 404).toJSON());
+    }
+    if (user._id.toString() !== code.userId) {
+        return res
+            .status(400)
+            .json(new ErrorResource_1.default("Request invalid", 400).toJSON());
+    }
+    yield ResetCode_1.default.deleteOne({
+        code: code.code,
+    });
+    const hashedPassword = yield argon2_1.default.hash(req.body.password.trim());
+    user.password = hashedPassword;
+    yield user.save();
+    return res.status(200).json(new AuthResource_1.default(user).toJSON());
+});
 const UserController = {
     signup,
     signin,
@@ -200,6 +253,8 @@ const UserController = {
     updateUser,
     validateUserEmail,
     changePassword,
+    forgotPassword,
+    resetPassword,
 };
 exports.default = UserController;
 //# sourceMappingURL=user.js.map

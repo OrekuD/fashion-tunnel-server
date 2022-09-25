@@ -302,7 +302,6 @@ const updateOrderStatus: RouteHandler = async (
 const signin: RouteHandler = async (req: IRequest<SignInRequest>, res) => {
   const email = req.body.email.trim().toLowerCase();
   const password = req.body.password.trim();
-  const deviceType = req.body.deviceType;
   if (!validateEmail(email)) {
     return res
       .status(400)
@@ -322,7 +321,7 @@ const signin: RouteHandler = async (req: IRequest<SignInRequest>, res) => {
         .status(400)
         .json(new ErrorResource("Password is invalid", 400));
     }
-    return res.status(200).json(new AuthResource(user, deviceType).toJSON());
+    return res.status(200).json(new AuthResource(user).toJSON());
   } catch {
     return res
       .status(500)
