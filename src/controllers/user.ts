@@ -281,7 +281,7 @@ const forgotPassword: RouteHandler = async (
   await ResetCodeModel.create({
     code,
     userId: user._id.toString(),
-    expiresAt: new Date(),
+    createdAt: new Date(),
   });
 
   sendEmail(
@@ -302,6 +302,21 @@ const resetPassword: RouteHandler = async (
   });
 
   if (!code) {
+    return res
+      .status(400)
+      .json(new ErrorResource("Code is invalid", 400).toJSON());
+  }
+
+  const timeDifference = Math.round(
+    (new Date().getTime() - code.createdAt!.getTime()) / 1000
+  );
+  const hasExpired = timeDifference >= 120;
+
+  if (hasExpired) {
+    await ResetCodeModel.deleteOne({
+      code: code.code,
+    });
+
     return res
       .status(400)
       .json(new ErrorResource("Code is invalid", 400).toJSON());

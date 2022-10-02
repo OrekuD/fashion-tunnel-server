@@ -7,15 +7,10 @@ export class ResetCode {
   @prop({ required: true })
   public userId!: string;
 
-  @prop({ required: true, index: true })
-  public expiresAt!: Date;
+  @prop({ required: true })
+  public createdAt!: Date;
 }
 
-const ResetCodeModel = getModelForClass(ResetCode, {
-  schemaOptions: {
-    expireAfterSeconds: 120,
-    timestamps: true,
-  },
-});
+const ResetCodeModel = getModelForClass(ResetCode);
 
 export default ResetCodeModel;

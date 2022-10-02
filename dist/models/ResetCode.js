@@ -22,15 +22,10 @@ __decorate([
     __metadata("design:type", String)
 ], ResetCode.prototype, "userId", void 0);
 __decorate([
-    (0, typegoose_1.prop)({ required: true, index: true }),
+    (0, typegoose_1.prop)({ required: true }),
     __metadata("design:type", Date)
-], ResetCode.prototype, "expiresAt", void 0);
+], ResetCode.prototype, "createdAt", void 0);
 exports.ResetCode = ResetCode;
-const ResetCodeModel = (0, typegoose_1.getModelForClass)(ResetCode, {
-    schemaOptions: {
-        expireAfterSeconds: 120,
-        timestamps: true,
-    },
-});
+const ResetCodeModel = (0, typegoose_1.getModelForClass)(ResetCode);
 exports.default = ResetCodeModel;
 //# sourceMappingURL=ResetCode.js.map

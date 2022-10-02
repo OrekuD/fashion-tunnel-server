@@ -209,7 +209,7 @@ const forgotPassword = (req, res) => __awaiter(void 0, void 0, void 0, function*
     yield ResetCode_1.default.create({
         code,
         userId: user._id.toString(),
-        expiresAt: new Date(),
+        createdAt: new Date(),
     });
     (0, sendEmail_1.default)(req.body.email.trim(), "Password reset", (0, getForgotPasswordTemplate_1.default)(user.firstname, code));
     return res.status(200).json(new OkResource_1.default().toJSON());
@@ -219,6 +219,16 @@ const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         code: req.body.code.trim(),
     });
     if (!code) {
+        return res
+            .status(400)
+            .json(new ErrorResource_1.default("Code is invalid", 400).toJSON());
+    }
+    const timeDifference = Math.round((new Date().getTime() - code.createdAt.getTime()) / 1000);
+    const hasExpired = timeDifference >= 120;
+    if (hasExpired) {
+        yield ResetCode_1.default.deleteOne({
+            code: code.code,
+        });
         return res
             .status(400)
             .json(new ErrorResource_1.default("Code is invalid", 400).toJSON());
