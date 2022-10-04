@@ -1,4 +1,7 @@
 {
+  "engines": {
+    "node": "14.19.0"
+  },
   "name": "fashion-tunnel-server",
   "version": "1.0.0",
   "description": "",
@@ -8,7 +11,6 @@
     "watch": "tsc -w && npm run make:images",
     "dev": "nodemon dist/index.js",
     "start": "node ./dist/index.js",
-    "build": "tsc",
     "make:images": "copyfiles -u 1 ./src/product_images ./dist"
   },
   "author": "David Opoku",
