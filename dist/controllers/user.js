@@ -63,7 +63,7 @@ const signup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             password: hashedPassword,
             deviceType,
             activeAddressId: "",
-            profilePicture: "",
+            profilePicture: "https://res.cloudinary.com/orekud/image/upload/v1664980925/fashion_tunnel/assets/default_avatar_ttd4jf.webp",
             role: types_1.Roles.USER,
         });
         return res.status(200).json(new AuthResource_1.default(user).toJSON());

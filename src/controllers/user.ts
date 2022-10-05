@@ -64,7 +64,8 @@ const signup: RouteHandler = async (
       password: hashedPassword,
       deviceType,
       activeAddressId: "",
-      profilePicture: "",
+      profilePicture:
+        "https://res.cloudinary.com/orekud/image/upload/v1664980925/fashion_tunnel/assets/default_avatar_ttd4jf.webp",
       role: Roles.USER,
     });
 
